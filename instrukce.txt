@@ -1,0 +1,20 @@
+I_ADD 	 scitani (a,b,vysledek)
+I_SUB 	 odcitani (a,b,vysledek)
+I_MUL 	 nasobeni (a,b,vysledek)
+I_DIV 	 deleni (a,b,vysledek)
+
+I_CMP 	 porovnani (a,b,vysledek) - a>b ->vysledek=1
+				    a<b ->vysledek=-1
+				    a=b ->vysledek=0
+
+I_READ	 cteni (datovy typ, x, kam)
+I_WRITE  zapis (datovy typ, x, odkud)
+I_STOP	 konec programu (x,x,x)
+I_LABEL  navesti (x,x,x)
+
+I_CALL	 volani funkce (adresa,x,navratova hodnota)
+I_FRAMEC vytvoreni ramce fce (ukazatel na TS funkce,,)
+I_FRAMED zruseni ramce aktivni fce (,,)
+I_RETURN return (co,x,kam)
+
+I_GOTO 	 skok (podminka,x,adresa)
