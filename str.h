@@ -5,6 +5,9 @@
 #ifndef STR_DEFINED
 #define STR_DEFINED
 
+#define STR_ERROR   1
+#define STR_SUCCESS 0
+
 typedef struct
 {
   char* str;		// misto pro dany retezec ukonceny znakem '\0'

@@ -10,9 +10,6 @@
 // pokud nacitame retezec znak po znaku, pamet se postupne bude alkokovat na
 // nasobky tohoto cisla 
 
-#define STR_ERROR   1
-#define STR_SUCCESS 0
-
 
 int strInit(string *s)
 // funkce vytvori novy retezec

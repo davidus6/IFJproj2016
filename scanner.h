@@ -8,6 +8,7 @@
 #define SCANNER_DEFINED
 
 #include "str.h"
+#include <stdio.h>
 
 
 #define KEYWORDS_AMOUNT 17
@@ -22,7 +23,7 @@ typedef enum
     T_INT,          //atribut int
     T_DOUBLE,       //atribut double
     T_STRING,       //atribut str
-    T_ERROR,        //atribut int
+    T_ERROR,        //atribut zadny - pocatecni nastaveni tokenu 
     T_EOF,          //atribut zadny
 
     //delimiters, pozice: DELIMITER+1 az T_DELIMITER+DELIMITERS_AMOUNT, atribut zadny
@@ -92,5 +93,7 @@ int whichOperator (char *str);
 void setSourceFile(FILE *f);
 token getToken();
 
+// promenna pro ulozeni vstupniho souboru
+FILE *source;
 
 #endif
