@@ -14,7 +14,7 @@
 #include "str.h"
 #include "error_codes.h"
 
-//#define DEBUG
+#define DEBUG
 
 
 static char *keywords[KEYWORDS_AMOUNT] = 
@@ -69,6 +69,7 @@ int whichOperator (char *str)
 	{
 		if ((strcmp(str, operators[i])) == 0)   //funkce je volana az v F_OPER, musi tedy najit shodu
 			return i+1;                 //vraci pozici operatoru v poli pocitano od 1
+
 	}
 	return -1;  //aby prekladac nebrecel, pripadne uzitacne jestli jsem neco dosral
 }
@@ -230,6 +231,7 @@ token getToken()
 				}
 				else if (c == '/')
 				{
+					strAddChar(s, c);	//pokud to pak bude koment tak to musim smaznout
 					state = SLASH;
 				}
 				else if (c == '*' || c == '+' || c == '-')
@@ -524,10 +526,12 @@ token getToken()
 			case SLASH:
 				if (c == '*')
 				{
+					strClear(s);
 					state = B_COMM;
 				}
 				else if (c == '/')
 				{
+					strClear(s);
 					state = L_COMM;
 				}
 				else
@@ -538,7 +542,7 @@ token getToken()
 			break;
 
 			case L_COMM:
-				if (c == '\n')
+				if (c == '\n' || c == EOF)
 				{
 					strClear(s);
 					state = INIT;
