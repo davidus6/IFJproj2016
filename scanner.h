@@ -92,6 +92,12 @@ int whichOperator (char *str);
 
 void setSourceFile(FILE *f);
 token getToken();
+void ungetToken(token);
+
+//globalni promenne pro pripad, kdy syntax an. vraci token
+token buffer;
+int bufferNotEmpty; // bude automaticky nastaveno na 0
+
 
 // promenna pro ulozeni vstupniho souboru
 FILE *source;

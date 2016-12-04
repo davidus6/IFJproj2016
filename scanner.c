@@ -111,8 +111,28 @@ void tokenInit(token tok)
 }
 
 
+
+void ungetToken(token tok)
+{
+	bufferNotEmpty = 1;
+	buffer.type = tok.type;
+	if (tok.type == T_ID || tok.type == T_QUALID || tok.type == T_STRING)
+		buffer.attribute.str = tok.attribute.str;
+	else if (tok.type == T_INT)
+		buffer.attribute.inumber = tok.attribute.inumber;
+	else if (tok.type == T_DOUBLE)
+		buffer.attribute.dnumber = tok.attribute.dnumber;
+	else
+		;
+}
+
 token getToken()
 {
+	if (bufferNotEmpty == 1)
+	{
+		bufferNotEmpty = 0;
+		return buffer;
+	}
 	// pomocna promenna pro kontrolu funkci volajicich malloc
 	int checkMalloc;
 
