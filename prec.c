@@ -1,5 +1,12 @@
 #include "prec.h"
 
+//#define DEBUG
+#ifdef DEBUG
+#define debug_print printf
+#else 
+#define debug_print(...) ((void)0)
+#endif
+
 static const char precTable [14][14] = 
 {
 //			 	 +	  -	  *	  /	  (   )	  <	  >	 <=	 >=	 ==	 !=	  i   $	
@@ -62,7 +69,7 @@ int getTableIndex(token tok){
     	case T_ID: case T_QUALID: case T_INT: case T_DOUBLE: case T_STRING:
     		index = OPER_I;
     		break;
-    	case TD_SEMICOLON:
+    	case TD_SEMICOLON: case TD_RC_BRACKET:
     		index = OPER_END;
     		break;
     	default:
@@ -108,33 +115,32 @@ int runPrecedence(){
 	pStack stack;
 	pStackItem item;
 	pStackItem *a;
-	int i = 0;
 	pStackItem *pptr;
 	item.type = OPER_END;
 	pStackInit(&stack);
 	pStackPush(&stack, &item);
 	token b = getToken();
-	printf("prvni token: %d\n", b.type);
+	debug_print("prvni token: %d\n", b.type);
 	do{
-	printf("\nZACATEK CYKLU\n");
+	debug_print("\nZACATEK CYKLU\n");
 		item.dataType = 0;
 		a = pStackTermTop(&stack);
-		printf("vrchol zasobniku: %d\n", a->type);
+		debug_print("vrchol zasobniku: %d\n", a->type);
 		char priority = getPriority(*a, b);
-		printf("priorita: %c\n", priority);
+		debug_print("priorita: %c\n", priority);
 		switch (priority) {
 			case '=':
-			printf("==================================================\n");
+			debug_print("==================================================\n");
 				item.type = getTableIndex(b);
 				pStackPush(&stack, &item);
 				b = getToken();
-			printf("==================================================\n");
+			debug_print("==================================================\n");
 				break;
 			case '<':
-			printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
+			debug_print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 				pptr = pStackTop(&stack);
 				if (pptr->type == NONTERM_E){
-					printf("na vrcholu je neterminal (%d)\n", pptr->type);
+					debug_print("na vrcholu je neterminal (%d)\n", pptr->type);
 					pStackItem item2;
 					item2.type = pptr->type;
 					item2.dataType = pptr->dataType;
@@ -142,30 +148,30 @@ int runPrecedence(){
 					pStackPop(&stack);
 					item.type = NONTERM_LBR;
 					pStackPush(&stack, &item);
-					printf("chci vlozit neterminal %d\n", item2.type);
+					debug_print("chci vlozit neterminal %d\n", item2.type);
 					pStackPush(&stack, &item2);
 				} else {
-					printf("na vrcholu je terminal (%d)\n", pptr->type);
+					debug_print("na vrcholu je terminal (%d)\n", pptr->type);
 					item.type = NONTERM_LBR;
 					pStackPush(&stack, &item);
 				}
 				item.type = getTableIndex(b);
 				if (item.type == 12){
 					insertData(b, &item);
-					printf("vkladam data\n");
+					debug_print("vkladam data\n");
 				}
 				pStackPush(&stack, &item);
 				b = getToken();
-				printf("nacten token %d\n", b.type);
-			printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
+				debug_print("nacten token %d\n", b.type);
+			debug_print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 				break;
 			case '>': ;
-			printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+			debug_print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 				pStackItem *term = pStackTermTop(&stack);
 				pStackItem *stackTop;
 				switch (term->type){
 					case OPER_I: 
-					printf("provadim pravidlo E -> i\n");	//pravidlo E -> i
+					debug_print("provadim pravidlo E -> i\n");	//pravidlo E -> i
 						//tady muze krome identifikatoru bejt jeste konstanta---nevyreseny
 						stackTop = pStackTop(&stack);
 						item.dataType = stackTop->dataType;
@@ -174,10 +180,9 @@ int runPrecedence(){
 						pStackPop(&stack);
 						item.type = NONTERM_E;
 						pStackPush(&stack, &item);
-					printf("konec pravidla E -> i\n");
 						break;
 					case OPER_RB:
-					printf("provadim pravidlo E -> (E)\n"); 	//pravidlo E -> (E)
+					debug_print("provadim pravidlo E -> (E)\n"); 	//pravidlo E -> (E)
 						pStackPop(&stack);
 						stackTop = pStackTop(&stack);
 						item.type = stackTop->type;
@@ -190,7 +195,7 @@ int runPrecedence(){
 						break;
 					case OPER_ADD: case OPER_SUB: case OPER_MUL: case OPER_DIV: case OPER_LT:
 					case OPER_GT: case OPER_LET: case OPER_GET: case OPER_EQ: case OPER_NEQ: //pravidlo E op E
-						printf("provadim pravidlo E -> E op E\n");
+						debug_print("provadim pravidlo E -> E op E\n");
 						pStackItem *op2 = pStackTop(&stack);
 						pStackPop(&stack);
 						pStackItem *operator = pStackTop(&stack);
@@ -206,22 +211,24 @@ int runPrecedence(){
 						pStackPush(&stack, &item);
 						break;
 					default:
-						printf("PSA SE POSRALA\n");
+						debug_print("PSA SE POSRALA\n");
+						return SYNTAX_ERROR;
 						break;
 				}
-				printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+				debug_print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 				break;
 			default:
-				printf("PSA SE POSRALA\n");
+				debug_print("PSA SE POSRALA\n");
 				return SYNTAX_ERROR;
 				break;
 		}
 		a = pStackTermTop(&stack);
 		pStackItem *bla = pStackTop(&stack);
-		printf("na zasobniku je terminal %d , neterminal %d, a token je %d\n",a->type, bla->type, b.type);
-		i++;
+		(void) bla;
+		debug_print("na zasobniku je terminal %d , neterminal %d, a token je %d\n",a->type, bla->type, b.type);
 	} while ((a->type != OPER_END) || (getTableIndex(b) != OPER_END));
-	printf("PSA HLASI USPECH!!!\n");
-	getToken();
-	return 0;
+	ungetToken(b);
+	pStackDestroy(&stack);
+	debug_print("PSA HLASI USPECH!!!\n");
+	return OK;
 }

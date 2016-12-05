@@ -1,5 +1,7 @@
 #include <malloc.h>
 
+#include "error_codes.h"
+
 //stack pro precedencku
 typedef enum 
 {
@@ -41,6 +43,7 @@ typedef struct {
 
 void pStackInit(pStack *S);
 void pStackPush(pStack *S, pStackItem *item);
-void pStackPop(pStack *S);
+int pStackPop(pStack *S);
+void pStackDestroy(pStack *S);
 pStackItem *pStackTop (pStack *S); //vraci prvek na vrcholu 
 pStackItem *pStackTermTop (pStack *S); //vraci terminal nejbliz vrcholu

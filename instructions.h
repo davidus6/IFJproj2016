@@ -6,18 +6,20 @@ typedef enum insType{
 	I_SUB,
 	I_MUL,
 	I_DIV,
-
 	I_CMP,
+	
 	I_READ,
 	I_WRITE,
 	I_STOP,
 	I_LABEL,
 
 	I_CALL,
-	I_RETURN,
 	I_FRAMEC,
 	I_FRAMED,
-}
+	I_RETURN,
+	
+	I_GOTO
+} insType;
 
 typedef struct
 {

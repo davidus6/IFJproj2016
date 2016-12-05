@@ -38,11 +38,21 @@ void pStackPush(pStack *S, pStackItem *item){
 	}
 }
 
-void pStackPop(pStack *S){
+int pStackPop(pStack *S){
+	if (S->size == 1){
+		return SYNTAX_ERROR;
+	}
 	pStackItem *ptr = S->top->prev;
 	free(S->top);
 	S->top = ptr;
 	S->size--;
+	return OK;
+}
+
+void pStackDestroy(pStack *S){
+	free(S->top);
+	S->top = NULL;
+	S->size = 0;
 }
 
 pStackItem *pStackTop(pStack *S){
