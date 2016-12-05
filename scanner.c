@@ -1,8 +1,10 @@
-/************scanner.c************
- *
- *hlavička hlavička hlavička
- *    
- */
+/***** scanner.c *****
+*
+*	Implementace interpretu imperativního jazyka IFJ16
+*	Tým 029, varianta b/3/I
+*	Autori: Janecek David, Jiruska Adam
+*	
+*/
 
 #include <stdio.h>
 #include <stdlib.h>

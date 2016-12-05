@@ -1,3 +1,11 @@
+/***** ial.h *****
+*
+*	Implementace interpretu imperativního jazyka IFJ16
+*	Tým 029, varianta b/3/I
+*	Autori: Janecek David, Jiruska Adam
+*	
+*/
+
 #ifndef IAL_DEFINED
 #define IAL_DEFINED
 
@@ -30,7 +38,8 @@ typedef struct dataFunc
 	//DODELAT
 	struct nodeLocal *local;	//lokalni tabulka symbolu
 	dataTypes dataType;
-	//parametry
+	//parametry char * ?? a pak v = void i = int d = double s = string
+	// parametry se take museji ukladat do lok. tabulky symbolu
 	//ukazatel na pasku
 } dataFunc;
 
