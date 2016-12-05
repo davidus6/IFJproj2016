@@ -16,7 +16,7 @@
 #include "str.h"
 #include "error_codes.h"
 
-//#define DEBUG
+#define DEBUG
 
 //DODELAT smaze se odsud az budou soubory pohromade
 int errorHandle(int value)
@@ -499,7 +499,10 @@ token getToken()
 					state = EXP;
 				}
 				else
+				{
+					ungetc (c, source);
 					state = F_DOUBLE;
+				}
 			break;
 
 			case EXP:
