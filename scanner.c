@@ -16,8 +16,13 @@
 #include "str.h"
 #include "error_codes.h"
 
-#define DEBUG
+//#define DEBUG
 
+//DODELAT smaze se odsud az budou soubory pohromade
+int errorHandle(int value)
+{
+  exit(value);
+}
 
 static char *keywords[KEYWORDS_AMOUNT] = 
 {
@@ -73,7 +78,7 @@ int whichOperator (char *str)
 			return i+1;                 //vraci pozici operatoru v poli pocitano od 1
 
 	}
-	return -1;  //aby prekladac nebrecel, pripadne uzitacne jestli jsem neco dosral
+	return -1;  //nemelo by nikdy nastat - uzitecne pokud je nekde neco spatne
 }
 
 int isdelimiter (char ch)
@@ -105,13 +110,55 @@ void setSourceFile(FILE *f)
   source = f;
 }
 
-void tokenInit(token tok)
+void tokenInit(token *tok)
 {
-	tok.type = T_ERROR;
-	tok.attribute.str = NULL;
+	tok->type = T_ERROR;
+	tok->attribute.str = NULL;
 	return;
 }
 
+
+// funkce rozdeli kval. id na prvni id a druhe id
+// a zjisti jestli nejake z nich neni keyword, pokud je, vraci 1, jinak 0
+int checkQualid(char *qualid)
+{
+	string string;
+	strInit(&string);
+	char ch;
+	int length = strlen(qualid);
+	int size = 1;
+	ch = qualid[0];
+	while (ch != '.')
+	{
+		strAddChar(&string, ch);
+		ch = qualid[size];
+		size++;
+	}
+	if (iskeyword(string.str))
+	{
+		strFree(&string);
+		return 1;
+	}
+	else
+	{
+		strClear(&string);
+		for (; size < length; size++)
+		{
+			ch = qualid[size];
+			strAddChar(&string, ch);
+		}
+		if (iskeyword(string.str))
+		{
+			strFree(&string);
+			return 1;
+		}
+		else
+		{
+			strFree(&string);
+			return 0;
+		}
+	}
+}
 
 
 void ungetToken(token tok)
@@ -139,15 +186,15 @@ token getToken()
 	int checkMalloc;
 
 	string asdf123;
-	string *s = &asdf123;   //DODELAT at to k necemu vypada
+	string *s = &asdf123;
 	checkMalloc = strInit(s);
 	if (checkMalloc == STR_ERROR)
 	{
 		strFree(s);
-		exit (INTER_ERROR);
+		errorHandle (INTER_ERROR);
 	}
 	token tok;
-	tokenInit (tok);
+	tokenInit (&tok);
 	
 	//pomocne promenne k urceni pozice oddelovace a klicoveho slova
 	int delim_assist = 0;
@@ -211,7 +258,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 						{
 							strFree(s);
-							exit (INTER_ERROR);
+							errorHandle (INTER_ERROR);
 						}
 					state = ID;
 				}
@@ -221,7 +268,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 						{
 							strFree(s);
-							exit (INTER_ERROR);
+							errorHandle (INTER_ERROR);
 						}   
 					state = ID_KEY;		
 				}
@@ -231,7 +278,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = DIGIT;
 				}
@@ -242,7 +289,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = F_DELIM;
 				}
@@ -262,7 +309,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = F_OPER;
 				}
@@ -272,7 +319,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = OP_GR1;
 				}
@@ -282,7 +329,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = OP_GR2;
 				}
@@ -309,7 +356,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = ID_KEY;
 				}
@@ -319,7 +366,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = ID;
 				}
@@ -329,7 +376,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = Q_ER;
 				}
@@ -353,7 +400,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					} 
 					state = ID;
 				}
@@ -363,7 +410,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = Q_ER;
 				}
@@ -381,7 +428,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = DIGIT;
 				}
@@ -391,7 +438,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = DEC_ER;
 				}
@@ -401,7 +448,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = EXP;
 				}
@@ -419,7 +466,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = DEC;
 				}
@@ -437,7 +484,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = DEC;
 				}
@@ -447,7 +494,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = EXP;
 				}
@@ -462,7 +509,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = S_EXP;
 				}
@@ -472,7 +519,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = NS_EXP;
 				}
@@ -490,7 +537,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = S_EXP;
 				}
@@ -508,7 +555,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = NS_EXP;
 				}
@@ -539,7 +586,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = STRING;
 				}
@@ -607,7 +654,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = OPER;
 				}
@@ -625,7 +672,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = OPER;
 				}
@@ -643,7 +690,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = QUALID;
 				}
@@ -661,7 +708,7 @@ token getToken()
 					if (checkMalloc == STR_ERROR)
 					{
 						strFree(s);
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					}
 					state = QUALID;
 				}
@@ -677,28 +724,28 @@ token getToken()
 				{
 					checkMalloc = strAddChar(s, 34);
 					if (checkMalloc == STR_ERROR)
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					state = STRING;
 				}
 				else if (c == 'n')
 				{
 					checkMalloc = strAddChar(s, '\n');
 					if (checkMalloc == STR_ERROR)
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					state = STRING;
 				}
 				else if (c == 't')
 				{
 					checkMalloc = strAddChar(s, '\t');
 					if (checkMalloc == STR_ERROR)
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					state = STRING;
 				}
 				else if (c == '\\')
 				{
 					checkMalloc = strAddChar(s, '\\');
 					if (checkMalloc == STR_ERROR)
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					state = STRING;
 				}
 				else if (isdigit(c) && ((c - '0') <= 3))
@@ -742,7 +789,7 @@ token getToken()
 					char e = decimalNumber;
 					checkMalloc = strAddChar(s, e);
 					if (checkMalloc == STR_ERROR)
-						exit (INTER_ERROR);
+						errorHandle (INTER_ERROR);
 					state = STRING;
 				}
 				else
@@ -848,6 +895,11 @@ token getToken()
 				#ifdef DEBUG
 				printf("konecny stav QUALID\n");
 				#endif
+				if (checkQualid(s->str))
+				{
+					strFree(s);
+					errorHandle(LEX_ERROR);
+				}
 				tok.type = T_QUALID;
 				tok.attribute.str = s->str;
 				return tok;
@@ -860,7 +912,7 @@ token getToken()
 				printf("konecny stav ERROR\n");
 				#endif
 				strFree(s);
-				exit(LEX_ERROR);
+				errorHandle(LEX_ERROR);
 			break;
 		}
 	}
@@ -869,6 +921,5 @@ token getToken()
 
 /*
 **DODELAT:
-*			printf stderr
-*			zda se, ze nektere errory zpusobuji leaky 
+*			
 */

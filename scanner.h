@@ -17,6 +17,8 @@
 #define DELIMITERS_AMOUNT 6
 #define OPERATORS_AMOUNT 11
 
+//DODELAT smaze se odsud az budou soubory pohromade
+int errorHandle(int);
 
 typedef enum 
 {
@@ -86,7 +88,7 @@ typedef struct
 } token;
 
 
-void tokenInit (token tok);
+void tokenInit (token *);
 
 int iskeyword (char *str);
 int isdelimiter (char str);
@@ -95,6 +97,8 @@ int whichOperator (char *str);
 void setSourceFile(FILE *f);
 token getToken();
 void ungetToken(token);
+
+int checkQualid(char *);
 
 //globalni promenne pro pripad, kdy syntax an. vraci token
 token buffer;
