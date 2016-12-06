@@ -1,0 +1,26 @@
+class asf{
+	static int gsf;
+	static int a = 0;
+	static void asdf(double a, String string){
+		int a;
+		a = 5;
+		fdsa.x = 5;
+		func(fdsa.x);
+		fdsa.ahoj(asdf, sad);
+		return a;
+	}
+}
+
+class fdsa{
+	static int x;
+}
+
+/*
+	pridani tridy 				- stAddClass(ukazatel na TS, ID);
+	pridani stat. promenne 		- stAddStaticVar(ID, datovy typ); (ukazatel na tabulku stat. promennych resi semantika)
+	prirazeni					- assign(ID leve strany,)
+		-DORESIT PRECEDENCNI ANALYZU = PRAVA STRANA PRIRAZENI
+	pridani stat. funkce		- stAddFunc(ID, navratovy typ); (ukazatel na tabulku stat. funkci resi semantika)
+	pridani parametru funkce	- stAddParam(ID, datovy typ);
+	pridani lok. promenne		- stAddLocalVar(ID, datovy typ);
+*/
