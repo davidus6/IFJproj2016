@@ -17,8 +17,6 @@
 #define DELIMITERS_AMOUNT 6
 #define OPERATORS_AMOUNT 11
 
-//DODELAT smaze se odsud az budou soubory pohromade
-int errorHandle(int);
 
 typedef enum 
 {
@@ -27,7 +25,7 @@ typedef enum
     T_INT,          //atribut int
     T_DOUBLE,       //atribut double
     T_STRING,       //atribut str
-    T_ERROR,        //atribut zadny - pocatecni nastaveni tokenu 
+    T_ERROR,        //atribut int
     T_EOF,          //atribut zadny
 
     //delimiters, pozice: DELIMITER+1 az T_DELIMITER+DELIMITERS_AMOUNT, atribut zadny
