@@ -74,7 +74,7 @@ void insertClass(nodeClassPtr *root, char *key) //DODELAT kdyz uz tam klic je ta
 			{
 				temp = NULL;
 				free (new);
-				//OSETRIT ERROR
+				return;
 			}
 			else
 				if (temp->right == NULL)
@@ -90,25 +90,25 @@ void insertClass(nodeClassPtr *root, char *key) //DODELAT kdyz uz tam klic je ta
 
 //funkce vyhledava tridu s klicem key
 //pokud najde, do promenne found vraci ukazatel na tuto tridu
-int searchClass(nodeClassPtr root, char *key, nodeClassPtr found)
+int searchClass(nodeClassPtr root, char *key, nodeClassPtr *found)
 {
 	if (root == NULL)
 		return FALSE;
 	int find = FALSE;		//FALSE == 0, TRUE ==1
-	nodeClassPtr temp = root;
-	while (temp != NULL)
+	*found = NULL;
+	*found = root;
+	while (*found != NULL)
 	{
-		if (strcmp(key, temp->keyName) < 0)	// pokud je hledany mensi
+		if (strcmp(key, (*found)->keyName) < 0)	// pokud je hledany mensi
 		{
-			temp = temp->left;
+			*found = (*found)->left;
 		}
-		else if (strcmp(key, temp->keyName) > 0)	//pokud je hledany vetsi
+		else if (strcmp(key, (*found)->keyName) > 0)	//pokud je hledany vetsi
 		{
-			temp = temp->right;
+			*found = (*found)->right;
 		}
 		else			//rovnaji se
 		{
-			found = temp;
 			find = TRUE;
 			break;
 		}
@@ -131,7 +131,7 @@ void disposeClassTree(nodeClassPtr *root)
 
 void initVarTree(nodeVarPtr *root)
 {
-	*root = NULL;
+	root = NULL;
 }
 
 void insertVar(nodeVarPtr *root, char *key, dataTypes type)
@@ -163,7 +163,7 @@ void insertVar(nodeVarPtr *root, char *key, dataTypes type)
 			{
 				temp = NULL;
 				free (new);
-				//OSETRIT ERROR
+				return;
 			}
 			else
 				if (temp->right == NULL)
@@ -177,25 +177,24 @@ void insertVar(nodeVarPtr *root, char *key, dataTypes type)
 	}
 }
 
-int searchVar(nodeVarPtr root, char *key, nodeVarPtr found)
+int searchVar(nodeVarPtr root, char *key, nodeVarPtr *found)
 {
 	if (root == NULL)
 		return FALSE;
 	int find = FALSE;		//FALSE == 0, TRUE ==1
-	nodeVarPtr temp = root;
-	while (temp != NULL)
+	*found = root;
+	while (*found != NULL)
 	{
-		if (strcmp(key, temp->keyName) < 0)	// pokud je hledany mensi
+		if (strcmp(key, (*found)->keyName) < 0)	// pokud je hledany mensi
 		{
-			temp = temp->left;
+			*found = (*found)->left;
 		}
-		else if (strcmp(key, temp->keyName) > 0)	//pokud je hledany vetsi
+		else if (strcmp(key, (*found)->keyName) > 0)	//pokud je hledany vetsi
 		{
-			temp = temp->right;
+			*found = (*found)->right;
 		}
 		else			//rovnaji se
 		{
-			found = temp;
 			find = TRUE;
 			break;
 		}
@@ -216,20 +215,22 @@ void disposeVarTree(nodeVarPtr *root)
 
 void initFuncTree(nodeFuncPtr *root)
 {
-	*root = NULL;
+	root = NULL;
 }
 
 void insertFunc(nodeFuncPtr *root, char *key, dataTypes type)
 {
-	nodeFuncPtr new = malloc(sizeof(struct nodeVar));
+	nodeFuncPtr new = malloc(sizeof(struct nodeFunc));
 	new->keyName = key;
 	new->type = type;
 	new->localTable = NULL;
-	initVarTree(&(new)->localTable);
+	initVarTree(&((new)->localTable));
 	new->left = NULL;
 	new->right = NULL;
 	if (*root == NULL)
+	{
 		*root = new;
+	}
 	else
 	{
 		nodeFuncPtr temp;
@@ -250,7 +251,7 @@ void insertFunc(nodeFuncPtr *root, char *key, dataTypes type)
 			{
 				temp = NULL;
 				free (new);
-				//OSETRIT ERROR
+				return;
 			}
 			else
 				if (temp->right == NULL)
@@ -264,25 +265,24 @@ void insertFunc(nodeFuncPtr *root, char *key, dataTypes type)
 	}
 }
 
-int searchFunc(nodeFuncPtr root, char *key, nodeFuncPtr found)
+int searchFunc(nodeFuncPtr root, char *key, nodeFuncPtr *found)
 {
 	if (root == NULL)
 		return FALSE;
 	int find = FALSE;		//FALSE == 0, TRUE ==1
-	nodeFuncPtr temp = root;
-	while (temp != NULL)
+	*found = root;
+	while (*found != NULL)
 	{
-		if (strcmp(key, temp->keyName) < 0)	// pokud je hledany mensi
+		if (strcmp(key, (*found)->keyName) < 0)	// pokud je hledany mensi
 		{
-			temp = temp->left;
+			*found = (*found)->left;
 		}
-		else if (strcmp(key, temp->keyName) > 0)	//pokud je hledany vetsi
+		else if (strcmp(key, (*found)->keyName) > 0)	//pokud je hledany vetsi
 		{
-			temp = temp->right;
+			*found = (*found)->right;
 		}
 		else			//rovnaji se
 		{
-			found = temp;
 			find = TRUE;
 			break;
 		}

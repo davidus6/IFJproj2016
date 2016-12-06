@@ -9,19 +9,21 @@
 #include "semantic.h"
 #include "error_codes.h"
 
+//contextClass = NULL;
+
 void initGlobalTable()
 {
 	initClassTree(&globalTable);
 }
 
-int stAddClass(char *key)
+int stAddClass(char *key)	//odstranit gT
 {		// DODELAT sracka s ifj16 - jesto to chce promyslet
-	if (searchClass(globalTable, key, NULL) == 1)
+	if (searchClass(globalTable, key, &testClass) == 1)	//testClass pac nechci aby mi to prepsalo kontex nebo neco
 		return (SEM_ERROR_UND);
 	else
 	{
 		insertClass(&globalTable, key);
-		searchClass(globalTable, key, contextClass);	//do contextClass ulozi ukazatel na aktualni tridu
+		searchClass(globalTable, key, &contextClass);	//do contextClass ulozi ukazatel na aktualni tridu
 		return OK;
 	}
 }
@@ -33,8 +35,9 @@ void stAddStaticVar(char *key, dataTypes type)
 
 void stAddFunc(char *key, dataTypes type)
 {
-	insertFunc(&(contextClass)->innerFunc, key, type);
-	searchFunc(contextClass->innerFunc , key, contextFunc);			//do contextFunc ulozi ukazatel na aktualni fci
+	insertFunc(&((contextClass)->innerFunc), key, type);
+	int found = searchFunc((contextClass)->innerFunc , key, &contextFunc);		//do contextFunc ulozi ukazatel na aktualni fci
+	printf("found: %d\n", found);
 }
 
 void stAddParam(char *key, dataTypes type)

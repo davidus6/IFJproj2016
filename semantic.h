@@ -32,6 +32,7 @@ nodeClassPtr globalTable;
 //kontextove promenne
 nodeClassPtr contextClass;
 nodeFuncPtr contextFunc;
+nodeClassPtr testClass;
 
 
 #endif

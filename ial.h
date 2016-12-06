@@ -20,6 +20,9 @@
 /**** vestavene funkce ****/
 void shellSort(char [],int);
 
+//DODELAT umazat az bude vse pohromade
+void errorHandle(int);
+
 
 /**** tabulka symbolu ****/
 
@@ -28,7 +31,8 @@ typedef enum
 	DATA_INT,
 	DATA_DOUBLE,
 	DATA_STRING,
-	DATA_VOID		//fce nemusi nic vracet
+	DATA_VOID,	//fce nemusi nic vracet
+	DATA_UNKNOWN
 }dataTypes;
 
 
@@ -68,17 +72,17 @@ typedef struct nodeFunc
 //funkce pro praci s tabulkami
 void initClassTree(nodeClassPtr *);
 void insertClass(nodeClassPtr *, char *);
-int searchClass(nodeClassPtr, char *, nodeClassPtr);
+int searchClass(nodeClassPtr, char *, nodeClassPtr *);
 void disposeClassTree(nodeClassPtr *);
 
 void initVarTree(nodeVarPtr *);
 void insertVar(nodeVarPtr *, char *, dataTypes);
-int searchVar(nodeVarPtr, char *, nodeVarPtr);
+int searchVar(nodeVarPtr, char *, nodeVarPtr *);
 void disposeVarTree(nodeVarPtr *);
 
 void initFuncTree(nodeFuncPtr *);
 void insertFunc(nodeFuncPtr *, char *, dataTypes);
-int searchFunc(nodeFuncPtr, char *, nodeFuncPtr);
+int searchFunc(nodeFuncPtr, char *, nodeFuncPtr *);
 void disposeFuncTree(nodeFuncPtr *);
 
 
