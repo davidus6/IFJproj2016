@@ -9,6 +9,34 @@
 #include "ial.h"
 #include <string.h>
 
+/**** vestavene funkce ****/
+void shellSort(char str[],int n)
+{
+	int i, j, step;
+	char temp;
+	step = n / 2;
+	while (step > 0)
+	{
+		for (i = step; i < n; i++)
+		{
+			j = i;
+			temp = str[i];
+			while ((j >= step) && (str[j-step] > temp))
+			{
+				str[j] = str[j-step];
+				j = j - step;
+			}
+		str[j] = temp;
+		}
+		if (step == 2)
+			step = 1;
+		else
+			step = (int) (step / 2.2);
+	}
+}
+
+
+/**** tabulka symbolu ****/
 void initClassTree(nodeClassPtr *root)
 {
 	root = NULL;
@@ -18,74 +46,82 @@ void insertClass(nodeClassPtr *root, char *key) //DODELAT kdyz uz tam klic je ta
 {
 	nodeClassPtr new = malloc(sizeof(struct nodeClass));
 	new->keyName = key;
-	new->inner = NULL;
-	initInnerTree (&(new->inner));
+	new->innerFunc = NULL;
+	new->innerVar = NULL;
+	initFuncTree(&(new)->innerFunc);
+	initVarTree(&(new)->innerVar);
 	new->left = NULL;
 	new->right = NULL;
 	if (*root == NULL)
 		*root = new;
 	else
 	{
-		nodeClassPtr actual;
-		actual = *root;
-		while (actual != NULL)
+		nodeClassPtr temp;
+		temp = *root;
+		while (temp != NULL)
 		{
-			if (strcmp(new->keyName, actual->keyName) < 0)
+			if (strcmp(new->keyName, temp->keyName) < 0)
 			{
-				if (actual->left == NULL)
+				if (temp->left == NULL)
 				{
-					actual->left = new;
-					actual = NULL;
+					temp->left = new;
+					temp = NULL;
 				}
 				else
-					actual = actual->left;
+					temp = temp->left;
 			}
-			else if (strcmp(new->keyName, actual->keyName) == 0)
+			else if (strcmp(new->keyName, temp->keyName) == 0)
 			{
-				actual = NULL;
+				temp = NULL;
 				free (new);
-				exit(3);	//DODELAT printf error mozna neco uvolnit
+				errorHandle(3);
 			}
 			else
-				if (actual->right == NULL)
+				if (temp->right == NULL)
 				{
-					actual->right = new;
-					actual = NULL;
+					temp->right = new;
+					temp = NULL;
 				}
 				else
-					actual = actual->right;
+					temp = temp->right;
 		}
 	}
 }
 
-int searchClass(nodeClassPtr root, char *key)
+//funkce vyhledava tridu s klicem key
+//pokud najde, do promenne found vraci ukazatel na tuto tridu
+int searchClass(nodeClassPtr root, char *key, nodeClassPtr found)
 {
-	int found = FALSE;		//FALSE == 0, TRUE ==1
-	nodeClassPtr active = root;
-	while (active != NULL)
+	if (root == NULL)
+		return FALSE;
+	int find = FALSE;		//FALSE == 0, TRUE ==1
+	nodeClassPtr temp = root;
+	while (temp != NULL)
 	{
-		if (strcmp(key, active->keyName) < 0)	// pokud je hledany mensi
+		if (strcmp(key, temp->keyName) < 0)	// pokud je hledany mensi
 		{
-			active = active->left;
+			temp = temp->left;
 		}
-		else if (strcmp(key, active->keyName) > 0)	//pokud je hledany vetsi
+		else if (strcmp(key, temp->keyName) > 0)	//pokud je hledany vetsi
 		{
-			active = active->right;
+			temp = temp->right;
 		}
 		else			//rovnaji se
 		{
-			found = TRUE;
+			found = temp;
+			find = TRUE;
 			break;
 		}
 	}
-	return found;
+	return find;
 }
 
 void disposeClassTree(nodeClassPtr *root)
 {
   if(*root != NULL)
   {
-  	disposeInnerTree(&(*root)->inner);
+  	disposeVarTree(&(*root)->innerVar);
+  	disposeFuncTree(&(*root)->innerFunc);
 	disposeClassTree(&(*root)->left);
 	disposeClassTree(&(*root)->right);
 	free(*root);
@@ -93,166 +129,175 @@ void disposeClassTree(nodeClassPtr *root)
   }
 }
 
-
-void initInnerTree(nodeInnerPtr *root)
+void initVarTree(nodeVarPtr *root)
 {
-	root = NULL;
+	*root = NULL;
 }
-void insertInner(nodeInnerPtr *root, nodeTypes type, char *key, void *data)
+
+void insertVar(nodeVarPtr *root, char *key, dataTypes type)
 {
-	nodeInnerPtr new = malloc(sizeof(struct nodeInner));
-	new->nodeType = type;
+	nodeVarPtr new = malloc(sizeof(struct nodeVar));
 	new->keyName = key;
-	new->data = data;
+	new->type = type;
 	new->left = NULL;
 	new->right = NULL;
 	if (*root == NULL)
 		*root = new;
 	else
 	{
-		nodeInnerPtr actual;
-		actual = *root;
-		while (actual != NULL)
+		nodeVarPtr temp;
+		temp = *root;
+		while (temp != NULL)
 		{
-			if (strcmp(new->keyName, actual->keyName) < 0)
+			if (strcmp(new->keyName, temp->keyName) < 0)
 			{
-				if (actual->left == NULL)
+				if (temp->left == NULL)
 				{
-					actual->left = new;
-					actual = NULL;
+					temp->left = new;
+					temp = NULL;
 				}
 				else
-					actual = actual->left;
+					temp = temp->left;
 			}
-			else if (strcmp(new->keyName, actual->keyName) == 0)
+			else if (strcmp(new->keyName, temp->keyName) == 0)
 			{
-				actual = NULL;	//DODELAT predelat viz vyse, vkladam do tabulky neco co uz tam je
+				temp = NULL;
 				free (new);
+				errorHandle(3);
 			}
 			else
-				if (actual->right == NULL)
+				if (temp->right == NULL)
 				{
-					actual->right = new;
-					actual = NULL;
+					temp->right = new;
+					temp = NULL;
 				}
 				else
-					actual = actual->right;
+					temp = temp->right;
 		}
 	}
 }
 
-int searchInner(nodeInnerPtr root, char *key)
+int searchVar(nodeVarPtr root, char *key, nodeVarPtr found)
 {
-	int found = FALSE;
-	nodeInnerPtr active = root;
-	while (active != NULL)
+	if (root == NULL)
+		return FALSE;
+	int find = FALSE;		//FALSE == 0, TRUE ==1
+	nodeVarPtr temp = root;
+	while (temp != NULL)
 	{
-		if (strcmp(key, active->keyName) < 0)	// pokud je hledany mensi
+		if (strcmp(key, temp->keyName) < 0)	// pokud je hledany mensi
 		{
-			active = active->left;
+			temp = temp->left;
 		}
-		else if (strcmp(key, active->keyName) > 0)	//pokud je hledany vetsi
+		else if (strcmp(key, temp->keyName) > 0)	//pokud je hledany vetsi
 		{
-			active = active->right;
+			temp = temp->right;
 		}
 		else			//rovnaji se
 		{
-			found = TRUE;
+			found = temp;
+			find = TRUE;
 			break;
 		}
 	}
-	return found;
+	return find;
 }
 
-
-
-void disposeInnerTree(nodeInnerPtr *root)
+void disposeVarTree(nodeVarPtr *root)
 {
-	if(*root != NULL)
+	if (*root != NULL)
 	{
-	disposeInnerTree(&(*root)->left);
-	disposeInnerTree(&(*root)->right);
-	free(*root);
-	*root = NULL;
+		disposeVarTree(&(*root)->left);
+		disposeVarTree(&(*root)->right);
+		free(*root);
+		*root = NULL;
 	}
 }
 
-
-void initLocalTree(nodeLocalPtr *root)
+void initFuncTree(nodeFuncPtr *root)
 {
-	root = NULL;
+	*root = NULL;
 }
-void insertLocal(nodeLocalPtr *root, char * key, dataVar data)
+
+void insertFunc(nodeFuncPtr *root, char *key, dataTypes type)
 {
-	nodeLocalPtr new = malloc(sizeof(struct nodeLocal));
+	nodeFuncPtr new = malloc(sizeof(struct nodeVar));
 	new->keyName = key;
-	new->data = data;
+	new->type = type;
+	new->localTable = NULL;
+	initVarTree(&(new)->localTable);
 	new->left = NULL;
 	new->right = NULL;
 	if (*root == NULL)
 		*root = new;
 	else
 	{
-		nodeLocalPtr actual;
-		actual = *root;
-		while (actual != NULL)
+		nodeFuncPtr temp;
+		temp = *root;
+		while (temp != NULL)
 		{
-			if (strcmp(new->keyName, actual->keyName) < 0)
+			if (strcmp(new->keyName, temp->keyName) < 0)
 			{
-				if (actual->left == NULL)
+				if (temp->left == NULL)
 				{
-					actual->left = new;
-					actual = NULL;
+					temp->left = new;
+					temp = NULL;
 				}
 				else
-					actual = actual->left;
+					temp = temp->left;
 			}
-			else if (strcmp(new->keyName, actual->keyName) == 0)
+			else if (strcmp(new->keyName, temp->keyName) == 0)
 			{
-				actual->data = new->data;	//DODELAT predelat?
+				temp = NULL;
 				free (new);
+				errorHandle(3);
 			}
 			else
-				if (actual->right == NULL)
+				if (temp->right == NULL)
 				{
-					actual->right = new;
-					actual = NULL;
+					temp->right = new;
+					temp = NULL;
 				}
 				else
-					actual = actual->right;
+					temp = temp->right;
 		}
 	}
 }
-int searchLocal(nodeLocalPtr root, char * key)
+
+int searchFunc(nodeFuncPtr root, char *key, nodeFuncPtr found)
 {
-	int found = FALSE;
-	nodeLocalPtr active = root;
-	while (active != NULL)
+	if (root == NULL)
+		return FALSE;
+	int find = FALSE;		//FALSE == 0, TRUE ==1
+	nodeFuncPtr temp = root;
+	while (temp != NULL)
 	{
-		if (strcmp(key, active->keyName) < 0)	// pokud je hledany mensi
+		if (strcmp(key, temp->keyName) < 0)	// pokud je hledany mensi
 		{
-			active = active->left;
+			temp = temp->left;
 		}
-		else if (strcmp(key, active->keyName) > 0)	//pokud je hledany vetsi
+		else if (strcmp(key, temp->keyName) > 0)	//pokud je hledany vetsi
 		{
-			active = active->right;
+			temp = temp->right;
 		}
 		else			//rovnaji se
 		{
-			found = TRUE;
+			found = temp;
+			find = TRUE;
 			break;
 		}
 	}
-	return found;
+	return find;
 }
 
-void disposeLocalTree(nodeLocalPtr *root)
+void disposeFuncTree(nodeFuncPtr *root)
 {
-	if(*root != NULL)
+	if (*root != NULL)
 	{
-	disposeLocalTree(&(*root)->left);
-	disposeLocalTree(&(*root)->right);
-	free(*root);
-	*root = NULL;
+		//disposeVarTree(&(*root)->localTable);	 uz bude disposenuto diky fci ukoncujici fci
+		disposeFuncTree(&(*root)->left);
+		disposeFuncTree(&(*root)->right);
+		free(*root);
+		*root = NULL;
 	}
 }

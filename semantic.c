@@ -8,36 +8,48 @@
 
 #include "semantic.h"
 
-void stAddClass(nodeClassPtr globalTable, char *key)
+void stAddClass(nodeClassPtr *globalTable, char *key)
 {		// DODELAT sracka s ifj16 - jesto to chce promyslet
-	if (searchClass(globalTable, key) == 1)
-		exit (3);	//DODELAT osetrit, ukoncit 
+	if (searchClass(*globalTable, key, NULL) == 1)
+		errorHandle (3);
 	else
 	{
-		insertClass(&globalTable, key);
+		insertClass(globalTable, key);
+		searchClass(*globalTable, key, contextClass);	//do contextClass ulozi ukazatel na aktualni tridu
 	}
 }
 
-void stAddStatic (nodeInnerPtr *root, nodeTypes type, char *key, void *data)
+void stAddStaticVar(char *key, dataTypes type)
 {
-	insertInner(root, type, key, data);
+	insertVar(&(contextClass)->innerVar, key, type);
 }
 
-void stAddVar (nodeLocalPtr root, char *key, dataVar data)
+void stAddFunc(char *key, dataTypes type)
 {
-	insertLocal(&root, key, data);
+	insertFunc(&(contextClass)->innerFunc, key, type);
+	searchFunc(contextClass->innerFunc , key, contextFunc);			//do contextFunc ulozi ukazatel na aktualni fci
 }
 
-void stEndFunc(nodeLocalPtr *root)
+void stAddParam(char *key, dataTypes type)
 {
+	insertVar(&(contextFunc)->localTable, key, type);
+}
+
+/* blokove akce */
+void stEndFunc(nodeVarPtr *root)
+{
+	disposeVarTree(root);
+}
+
+void stEndProg(nodeClassPtr *root)
+{
+	disposeClassTree(root);
+}
+
+
 	/*DODELAT Byly všechny návěští, které obsahuje tabulka symbolů,
 	nalezeny v těle funkce? (Nebyl na neexistující návěští
 	vytvořen pouze skok?*/
-	disposeLocalTree(root);
-}
-
-void stEndProg(nodeClassPtr *globalTable)
-{
 	/*Konec programu:
 • Sémantické kontroly:
 • Byly všechny deklarované funkce i definované?
@@ -46,9 +58,7 @@ void stEndProg(nodeClassPtr *globalTable)
 • Vyprázdnit tabulku symbolů globální úrovně + nagenerovat
 instrukce, které dealokují datový blok globálních proměnných
 */
-	disposeClassTree(globalTable);
-	*globalTable = NULL;
-}
+
 
 int doubleToInt(double convert)
 {
