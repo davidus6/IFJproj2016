@@ -17,6 +17,8 @@ typedef enum insType{
 	I_FRAMEC,
 	I_FRAMED,
 	I_RETURN,
+
+	I_BLOCKC,
 	
 	I_GOTO
 } insType;

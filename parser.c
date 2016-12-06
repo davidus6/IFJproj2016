@@ -12,7 +12,7 @@
 int runParser(){
 	int ret = prog();
 	debug_print("BYLO VRACENO %d (0 je OK, jinak je chyba)\n", ret);
-	printf("BYLO VRACENO %d (0 je OK, jinak je chyba)\n", ret);
+	//printf("BYLO VRACENO %d (0 je OK, jinak je chyba)\n", ret);
 	return ret;
 }
 
@@ -141,8 +141,10 @@ int definition_rest(char *id, int dataType, int context){	 	//<definition_rest> 
 		//zavolat semantiku pro definici promenne
 			if (context){
 				debug_print("         <static variable ID = %s dataType = %d>\n", id, dataType);
+				stAddStaticVar(id, dataType);
 			} else {
 				debug_print("         <local variable ID = %s dataType = %d>\n", id, dataType);
+				//VOLANI FUNKCE PRO PRIDANI LOK. PROMENNE
 			}
 			return OK;
 			break;
@@ -155,8 +157,12 @@ int definition_rest(char *id, int dataType, int context){	 	//<definition_rest> 
 				if (tok2.type == TD_SEMICOLON){
 					if (context){
 						debug_print("         <static variable ID = %s dataType = %d + initialization>\n", id, dataType);
+						stAddStaticVar(id, dataType);
+						//VOLANI FUNKCE PRO KONTROLU PRIRAZENI
 					} else {
 						debug_print("         <local variable ID = %s dataType = %d + initialization>\n", id, dataType);
+						//VOLANI FUNKCE PRO PRIDANI LOK. PROMENNE
+						//VOLANI FUNKCE PRO KONTROLU PRIRAZENI
 					}
 					return OK;
 				} 
@@ -166,6 +172,7 @@ int definition_rest(char *id, int dataType, int context){	 	//<definition_rest> 
 
 		case TD_L_BRACKET:
 		debug_print("         <static function ID = %s returnType = %d>\n", id, dataType);
+			stAddFunc(id, dataType);
 			int ret = param_list();
 			if (ret == OK){
 				ret = body(1);
@@ -193,6 +200,7 @@ int param_list(){  //<param_list> -> <datovy typ> ID <param_rest>
 			token tok2 = getToken();
 			if (tok2.type == T_ID){
 				printf("            <param ID = %s dataType = %d>\n", tok2.attribute.str, dataType);
+				stAddParam(tok2.attribute.str, dataType);
 				ret = param_rest();
 				return ret;
 			}
@@ -213,9 +221,11 @@ int param_rest(){	//<param_rest> -> , <datovy typ> ID <param_rest>
 			tok = getToken();
 			if (tok.type == TK_INT || tok.type == TK_DOUBLE || tok.type == TK_STRING){
 				int dataType = data_type(tok);
+				(void) dataType;
 				token tok2 = getToken();
 				if (tok2.type == T_ID){
 					debug_print("            <param ID = %s dataType = %d>\n", tok2.attribute.str, dataType);
+					stAddParam(tok2.attribute.str, dataType);
 					ret = param_rest();
 					return ret;
 				}
@@ -346,7 +356,6 @@ int stat(int def){	//OK<stat> -> <data_type> ID <definition_rest> ; --definice l
 
 			case TK_INT: case TK_DOUBLE: case TK_STRING: ; //FUNGUJE
 				if (def){
-					printf("def je %d\n", def);
 					int dataType = data_type(tok);
 					token tokID = getToken();
 					if (tokID.type == T_ID){

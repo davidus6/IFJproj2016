@@ -1,6 +1,7 @@
 #include "scanner.h"
 #include "prec.h"
 #include "error_codes.h"
+#include "semantic.h"
 
 int runParser();
 int prog();

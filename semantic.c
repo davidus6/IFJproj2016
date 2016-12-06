@@ -11,7 +11,7 @@
 void stAddClass(nodeClassPtr *globalTable, char *key)
 {		// DODELAT sracka s ifj16 - jesto to chce promyslet
 	if (searchClass(*globalTable, key, NULL) == 1)
-		errorHandle (3);
+		;//OSETRIT ERROR
 	else
 	{
 		insertClass(globalTable, key);

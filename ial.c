@@ -74,7 +74,7 @@ void insertClass(nodeClassPtr *root, char *key) //DODELAT kdyz uz tam klic je ta
 			{
 				temp = NULL;
 				free (new);
-				errorHandle(3);
+				//OSETRIT ERROR
 			}
 			else
 				if (temp->right == NULL)
@@ -163,7 +163,7 @@ void insertVar(nodeVarPtr *root, char *key, dataTypes type)
 			{
 				temp = NULL;
 				free (new);
-				errorHandle(3);
+				//OSETRIT ERROR
 			}
 			else
 				if (temp->right == NULL)
@@ -250,7 +250,7 @@ void insertFunc(nodeFuncPtr *root, char *key, dataTypes type)
 			{
 				temp = NULL;
 				free (new);
-				errorHandle(3);
+				//OSETRIT ERROR
 			}
 			else
 				if (temp->right == NULL)

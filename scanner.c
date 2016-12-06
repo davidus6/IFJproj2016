@@ -16,7 +16,7 @@
 #include "str.h"
 #include "error_codes.h"
 
-#define DEBUG
+//#define DEBUG
 
 //DODELAT smaze se odsud az budou soubory pohromade
 int errorHandle(int value)

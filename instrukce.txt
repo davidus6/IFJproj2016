@@ -17,4 +17,6 @@ I_FRAMEC vytvoreni ramce fce (ukazatel na TS funkce,,)
 I_FRAMED zruseni ramce aktivni fce (,,)
 I_RETURN return (co,x,kam)
 
+I_BLOCKC alokovani bloku pro promennou (lok/glob, index, datovy typ)
+
 I_GOTO 	 skok (podminka,x,adresa)

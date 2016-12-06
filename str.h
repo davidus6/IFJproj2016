@@ -1,10 +1,4 @@
-/***** str.h *****
-*
-*	Implementace interpretu imperativního jazyka IFJ16
-*	Tým 029, varianta b/3/I
-*	Prevzato z ukazky
-*	
-*/
+//hlavickovy soubor pro praci s nekonecne dlouhymi retezci, prevzato z ukazky
 
 
 

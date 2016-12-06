@@ -7,6 +7,10 @@ int runInterpret(tInstrList *instrList){
 	tInstr *I;	
 	tStack frameStack;
 	initStack(&frameStack);
+	
+	void *globalData[100];
+	//void *localData[100];
+
 	while (1){
 		I = getInstruction(instrList);
 		//printf("cyklim-typ instrukce je %d\n", I->insType);
@@ -19,6 +23,7 @@ int runInterpret(tInstrList *instrList){
 			break;
 
 		case I_READ:
+			printf("%d\n",*((int*)globalData[*((int *)I->op2)]));
 		//nacteni hodnoty ze stdin
 			break;
 
@@ -61,6 +66,17 @@ int runInterpret(tInstrList *instrList){
 
 		case I_CALL:
 			goToInstr(instrList, I->res);
+			break;
+
+		case I_BLOCKC:
+			if (*((int*)I->op1) == 1){ //jde o globalni promennou
+				int test = 5;
+				globalData[*((int *)I->op2)] = malloc(sizeof(I->res));
+				globalData[*((int *)I->op2)] = (void*)&test;
+			} else { //jde o lokalni promennou
+
+			}
+
 			break;
 		}
 		nextInstruction(instrList);

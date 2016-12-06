@@ -20,9 +20,6 @@
 /**** vestavene funkce ****/
 void shellSort(char [],int);
 
-//DODELAT umazat az bude vse pohromade
-void errorHandle(int);
-
 
 /**** tabulka symbolu ****/
 
