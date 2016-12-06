@@ -10,26 +10,23 @@
 #define SEMANTIC_H
 #include "ial.h"
 
-void stAddClass(nodeClassPtr ,char *);
-
-void stAddStatic(nodeInnerPtr *, nodeTypes, char *, void *);
-
-void stAddVar (nodeLocalPtr , char *, dataVar);
-
+void stAddClass(nodeClassPtr * ,char *);
+void stAddStaticVar (char *, dataTypes);
+void stAddFunc(char *, dataTypes);
+void stAddParam(char *, dataTypes);
 
 /**** po konci bloku ****/
-void stEndFunc(nodeLocalPtr *);
+void stEndFunc(nodeVarPtr *);
 void stEndProg(nodeClassPtr *);
 
-/*
-funkce: prirazeni
-		definice??
-		konverze v zadani
-		KONEC funkce check 
-		KONEC programu check
-*/
+
 
 int doubleToInt(double);
 double intToDouble(int);
+
+//kontextove promenne
+nodeClassPtr contextClass;
+nodeFuncPtr contextFunc;
+
 
 #endif
