@@ -7,15 +7,22 @@
 */
 
 #include "semantic.h"
+#include "error_codes.h"
 
-void stAddClass(nodeClassPtr *globalTable, char *key)
+void initGlobalTable()
+{
+	initClassTree(&globalTable);
+}
+
+int stAddClass(char *key)
 {		// DODELAT sracka s ifj16 - jesto to chce promyslet
-	if (searchClass(*globalTable, key, NULL) == 1)
-		;//OSETRIT ERROR
+	if (searchClass(globalTable, key, NULL) == 1)
+		return (SEM_ERROR_UND);
 	else
 	{
-		insertClass(globalTable, key);
-		searchClass(*globalTable, key, contextClass);	//do contextClass ulozi ukazatel na aktualni tridu
+		insertClass(&globalTable, key);
+		searchClass(globalTable, key, contextClass);	//do contextClass ulozi ukazatel na aktualni tridu
+		return OK;
 	}
 }
 

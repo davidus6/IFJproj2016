@@ -10,7 +10,8 @@
 #define SEMANTIC_H
 #include "ial.h"
 
-void stAddClass(nodeClassPtr * ,char *);
+void initGlobalTable();
+int stAddClass(char *);
 void stAddStaticVar (char *, dataTypes);
 void stAddFunc(char *, dataTypes);
 void stAddParam(char *, dataTypes);
@@ -23,6 +24,10 @@ void stEndProg(nodeClassPtr *);
 
 int doubleToInt(double);
 double intToDouble(int);
+
+/* globalni promenne */
+//tabulka symbolu
+nodeClassPtr globalTable;
 
 //kontextove promenne
 nodeClassPtr contextClass;
