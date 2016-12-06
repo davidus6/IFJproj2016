@@ -36,8 +36,7 @@ void stAddStaticVar(char *key, dataTypes type)
 void stAddFunc(char *key, dataTypes type)
 {
 	insertFunc(&((contextClass)->innerFunc), key, type);
-	int found = searchFunc((contextClass)->innerFunc , key, &contextFunc);		//do contextFunc ulozi ukazatel na aktualni fci
-	printf("found: %d\n", found);
+	searchFunc((contextClass)->innerFunc , key, &contextFunc);		//do contextFunc ulozi ukazatel na aktualni fci
 }
 
 void stAddParam(char *key, dataTypes type)
@@ -46,11 +45,14 @@ void stAddParam(char *key, dataTypes type)
 }
 
 /* blokove akce */
-void stEndFunc(nodeVarPtr *root)
+/* konec fce */
+void stEndFunc(nodeVarPtr *localTable)
 {
-	disposeVarTree(root);
+	contextFunc = NULL;
+	disposeVarTree(localTable);
 }
 
+/* konec programu */
 void stEndProg(nodeClassPtr *root)
 {
 	disposeClassTree(root);
