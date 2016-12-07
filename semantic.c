@@ -196,8 +196,43 @@ int precConst(char *class, char *function, dataTypes type, char **ret)
     	*ret = name.str;
     	return OK;
     }
+}
 
-
+//kontrola definice ID
+int precVar(char *class, char *function, char *variable, int idType)
+{
+	if (idType == 1)
+	{
+		variable = divideQualid(variable, 1);
+	}
+	int checkFound;
+	nodeClassPtr clNode;
+    nodeFuncPtr fuNode;
+    nodeVarPtr vaNode;
+    //printf("v precVar: jsem tady\n");
+	if (function == NULL)
+	{
+		checkFound = searchClass(globalTable, class, &clNode);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	checkFound = searchVar(clNode->innerVar, variable, &vaNode);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	return OK;
+	}
+	else
+	{
+		checkFound = searchClass(globalTable, class, &clNode);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	checkFound = searchFunc(clNode->innerFunc, function, &fuNode);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	checkFound = searchVar(fuNode->localTable, variable, &vaNode);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	return OK;
+	}
 }
 
 /*int precVar();

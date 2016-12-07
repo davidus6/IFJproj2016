@@ -10,6 +10,7 @@
 #define SEMANTIC_H
 #include "ial.h"
 #include "str.h"
+#include "scanner.h"
 
 void initGlobalTable();
 int stAddClass(char *);
@@ -20,7 +21,7 @@ int stAddLocalVar(char *, dataTypes);
 
 /* semanticke funkce pro precedencni analyzu */
 int precConst(char *, char *, dataTypes, char **);	//prvni 2 param je nazev tridy a fce //predelat dataTypes na int
-int precVar(char *, char *, char *, int);
+int precVar(char *, char *, char *, int);	//trida, fce, promenna, 1=qualif-0=id
 int precOper();
 
 
