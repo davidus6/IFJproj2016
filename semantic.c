@@ -14,6 +14,7 @@
 void initGlobalTable()
 {
 	initClassTree(&globalTable);
+	tempIndex = 25;
 }
 
 int stAddClass(char *key)	//odstranit gT
@@ -127,17 +128,24 @@ void stEndProg()
 }
 
 
-	/*DODELAT Byly všechny návěští, které obsahuje tabulka symbolů,
-	nalezeny v těle funkce? (Nebyl na neexistující návěští
-	vytvořen pouze skok?*/
-	/*Konec programu:
-• Sémantické kontroly:
-• Byly všechny deklarované funkce i definované?
-• Byla nalezena funkce main a obsahovala správné parametry?
-• Dále provést:
-• Vyprázdnit tabulku symbolů globální úrovně + nagenerovat
-instrukce, které dealokují datový blok globálních proměnných
-*/
+void generateVar(string *var)
+// generuje jedinecne nazvy identifikatoru
+// nazev se sklada ze znaku $txP a rady cisel
+{
+	counterVar ++;
+	strClear(var);
+	strAddChar(var, '$');
+	strAddChar(var, 't');
+	strAddChar(var, 'x');
+	strAddChar(var, 'P');
+	int i;
+	i = counterVar;
+	while (i != 0)
+	{
+		strAddChar(var, (char)(i % 10 + '0'));
+		i = i / 10;
+	}
+} 
 
 
 int doubleToInt(double convert)
@@ -149,3 +157,48 @@ double intToDouble(int convert)
 {
 	return (double)convert;
 }
+
+
+/* semanticke funkce pro precedencni analyzu */
+int precConst(char *class, char *function, dataTypes type, char **ret)	
+//prvni 2 param je nazev tridy a fce
+//do ret potrebuji poslat vygenerovane id
+{
+	int checkMalloc, checkFound = 0;
+	string name;
+	checkMalloc = strInit(&name);
+    if (checkMalloc == STR_ERROR)
+    {
+        strFree(&name);
+        return INTER_ERROR;
+    }
+    generateVar(&name);
+    nodeClassPtr clNode;
+    nodeFuncPtr fuNode;
+    checkFound = searchClass(globalTable, class, &clNode);
+    if (checkFound == 0)
+    	return SEM_ERROR_UND;
+    if (function != NULL)
+    {
+    	checkFound = searchFunc(clNode->innerFunc, function, &fuNode);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	insertVar(&(fuNode)->localTable, name.str, type, &tempIndex);
+    	tempIndex++;
+    	*ret = name.str;
+    	return OK;
+
+    }
+    else
+    {
+    	insertVar(&(clNode)->innerVar, name.str, type, &globalIndex);
+    	globalIndex++;
+    	*ret = name.str;
+    	return OK;
+    }
+
+
+}
+
+/*int precVar();
+int precOper();*/

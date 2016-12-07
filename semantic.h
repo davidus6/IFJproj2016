@@ -9,6 +9,7 @@
 #ifndef SEMANTIC_H
 #define SEMANTIC_H
 #include "ial.h"
+#include "str.h"
 
 void initGlobalTable();
 int stAddClass(char *);
@@ -16,6 +17,12 @@ int stAddStaticVar (char *, dataTypes);
 int stAddFunc(char *, dataTypes);
 int stAddParam(char *, dataTypes);
 int stAddLocalVar(char *, dataTypes);
+
+/* semanticke funkce pro precedencni analyzu */
+int precConst(char *, char *, dataTypes, char **);	//prvni 2 param je nazev tridy a fce //predelat dataTypes na int
+int precVar(char *, char *, char *, int);
+int precOper();
+
 
 int stAssignment(char *, int, char *);	//prirazeni, zatim pocitam s tim ze na obou stranach je promenna
 void stCompareTypes();
@@ -34,6 +41,9 @@ void stEndProg();
 int doubleToInt(double);
 double intToDouble(int);
 
+/* generuje unikatni ID */
+void generateVar(string *);
+
 /* globalni promenne */
 
 //tabulka symbolu
@@ -42,11 +52,16 @@ nodeClassPtr globalTable;
 //index promenne
 int globalIndex;
 int localIndex;
+int tempIndex;
 
 //kontextove promenne
 nodeClassPtr contextClass;
 nodeFuncPtr contextFunc;
 nodeClassPtr testClass;
+
+//pouziva se u generateVar
+int counterVar;
+
 
 
 #endif
