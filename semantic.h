@@ -12,17 +12,22 @@
 
 void initGlobalTable();
 int stAddClass(char *);
-void stAddStaticVar (char *, dataTypes);
-void stAddFunc(char *, dataTypes);
-void stAddParam(char *, dataTypes);
-void stAddLocalVar(char *, dataTypes);
+int stAddStaticVar (char *, dataTypes);
+int stAddFunc(char *, dataTypes);
+int stAddParam(char *, dataTypes);
+int stAddLocalVar(char *, dataTypes);
+
+int stAssignment(char *, int, char *);	//prirazeni, zatim pocitam s tim ze na obou stranach je promenna
+void stCompareTypes();
 
 //jeji index a datovej typ
 void retIndexType(char *, int *, dataTypes *);	//volano po pridani static prom. po jeji definici
 
+
+
 /**** po konci bloku ****/
 void stEndFunc();
-void stEndProg(nodeClassPtr *);
+void stEndProg();
 
 
 

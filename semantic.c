@@ -18,8 +18,9 @@ void initGlobalTable()
 
 int stAddClass(char *key)	//odstranit gT
 {		// DODELAT sracka s ifj16 - jesto to chce promyslet
-	if (searchClass(globalTable, key, &testClass) == 1)	//testClass pac nechci aby mi to prepsalo kontex nebo neco
-		return (SEM_ERROR_UND);
+	nodeClassPtr throwAway;
+	if (searchClass(globalTable, key, &throwAway) == 1)	//nechci aby mi to prepsalo kontex nebo neco
+		return SEM_ERROR_UND;
 	else
 	{
 		insertClass(&globalTable, key);
@@ -28,28 +29,78 @@ int stAddClass(char *key)	//odstranit gT
 	}
 }
 
-void stAddStaticVar(char *key, dataTypes type)
+int stAddStaticVar(char *key, dataTypes type)
 {
+	nodeVarPtr throwAway;
+	if (searchVar((contextClass)->innerVar, key, &throwAway) == 1)
+		return SEM_ERROR_UND;
 	insertVar(&(contextClass)->innerVar, key, type, &globalIndex);
 	globalIndex++;
+	return OK;
 }
 
-void stAddFunc(char *key, dataTypes type)
+int stAddFunc(char *key, dataTypes type)
 {
+	nodeFuncPtr throwAway;
+	if (searchFunc((contextClass)->innerFunc, key, &throwAway) == 1)
+		return SEM_ERROR_UND;
 	stEndFunc();
 	insertFunc(&((contextClass)->innerFunc), key, type);
 	searchFunc((contextClass)->innerFunc , key, &contextFunc);		//do contextFunc ulozi ukazatel na aktualni fci
+	return OK;
 }
 
-void stAddParam(char *key, dataTypes type)
+int stAddParam(char *key, dataTypes type)
 {
+	nodeVarPtr throwAway;
+	if (searchVar((contextFunc)->localTable, key, &throwAway) == 1)
+		return SEM_ERROR_UND;
 	insertVar(&(contextFunc)->localTable, key, type, &localIndex);
 	localIndex++;
+	return OK;
 }
-void stAddLocalVar(char *key, dataTypes type)
+int stAddLocalVar(char *key, dataTypes type)
 {
+	nodeVarPtr throwAway;
+	if (searchVar((contextFunc)->localTable, key, &throwAway) == 1)
+		return SEM_ERROR_UND;
 	insertVar(&(contextFunc)->localTable, key, type, &localIndex);
 	localIndex++;
+	return OK;
+}
+
+//idType == 1 -> je to qualid, == 0 -> je to normal id
+int stAssignment(char *key1, int idType, char *key2)
+{
+	if (idType == 1)
+	{
+		return OK;//printf("DODELAT\n");
+	}
+	else
+	{
+		nodeVarPtr testVarPtr1;
+		nodeVarPtr testVarPtr2;
+		int check = searchVar((contextClass)->innerVar, key1, &testVarPtr1);
+		if (check == 0)
+		{
+			return SEM_ERROR_UND;
+		}
+		else
+		{
+			check = searchVar((contextClass)->innerVar, key1, &testVarPtr2);
+			if (check == 0)
+			{
+				return SEM_ERROR_UND;
+			}
+			else
+			{
+				if (testVarPtr1->type == testVarPtr2->type)
+					return OK;
+				else
+					return SEM_ERROR_TYPE;
+			}
+		}
+	}
 }
 
 void retIndexType(char * varName, int *index, dataTypes *type)
@@ -70,9 +121,9 @@ void stEndFunc()	//nodeVarPtr *localTable pokud bude potreba mazat VarTree
 }
 
 /* konec programu */
-void stEndProg(nodeClassPtr *root)
+void stEndProg()
 {
-	disposeClassTree(root);
+	disposeClassTree(&globalTable);
 }
 
 

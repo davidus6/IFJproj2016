@@ -295,7 +295,7 @@ void disposeFuncTree(nodeFuncPtr *root)
 {
 	if (*root != NULL)
 	{
-		//disposeVarTree(&(*root)->localTable);	 uz bude disposenuto diky fci ukoncujici fci
+		disposeVarTree(&(*root)->localTable);
 		disposeFuncTree(&(*root)->left);
 		disposeFuncTree(&(*root)->right);
 		free(*root);
