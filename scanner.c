@@ -400,6 +400,7 @@ token getToken()
                     #endif
                     strFree(s);
                     tok.type = T_EOF;
+                    rewind(source);
                     return tok;
                 }
                 else
