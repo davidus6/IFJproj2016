@@ -1,0 +1,17 @@
+class main{
+	static void a(){
+	 	a = x;
+
+	 	x.a = x.ahoj(arg1, arg2);
+	 	a = x.fda();
+
+	 	x.asdf();
+	 	assdf();
+	}
+}
+
+/*
+funCall(ID, typ identifikatoru, ID promenne kam se funkce prirazuje, typ ID promenne kam se funkce prirazuje); 
+funCallVoid(ID, typ identifikatoru);
+
+*/
