@@ -111,44 +111,75 @@ void tokenInit(token *tok)
     return;
 }
 
+// rozdeli qualid na 2 identifikatory, vrati jmeno jednoho z nich podle mode
+// mode 0 vraci nazev tridy, jinak nazev funkce/promenne
+char *divideQualid(char *qualid, int mode)
+{
+	string str;
+	strInit(&str);
+	char ch;
+	int length = strlen(qualid);
+	int size = 1;
+	ch = qualid[0];
+	while (ch != '.')
+	{
+		strAddChar(&str, ch);
+		ch = qualid[size];
+		size++;
+	}
+	if (mode == 0)
+	{
+		return str.str;
+	}
+	else
+	{
+		strClear(&str);
+		for (; size < length; size++)
+		{
+			ch = qualid[size];
+			strAddChar(&str, ch);
+		}
+		return str.str;
+	}
+}
 
 // funkce rozdeli kval. id na prvni id a druhe id
 // a zjisti jestli nejake z nich neni keyword, pokud je, vraci 1, jinak 0
 int checkQualid(char *qualid)
 {
-    string string;
-    strInit(&string);
+    string str;
+    strInit(&str);
     char ch;
     int length = strlen(qualid);
     int size = 1;
     ch = qualid[0];
     while (ch != '.')
     {
-        strAddChar(&string, ch);
+        strAddChar(&str, ch);
         ch = qualid[size];
         size++;
     }
-    if (iskeyword(string.str))
+    if (iskeyword(str.str))
     {
-        strFree(&string);
+        strFree(&str);
         return 1;
     }
     else
     {
-        strClear(&string);
+        strClear(&str);
         for (; size < length; size++)
         {
             ch = qualid[size];
-            strAddChar(&string, ch);
+            strAddChar(&str, ch);
         }
-        if (iskeyword(string.str))
+        if (iskeyword(str.str))
         {
-            strFree(&string);
+            strFree(&str);
             return 1;
         }
         else
         {
-            strFree(&string);
+            strFree(&str);
             return 0;
         }
     }
@@ -157,24 +188,42 @@ int checkQualid(char *qualid)
 
 void ungetToken(token tok)
 {
-    bufferNotEmpty = 1;
-    buffer.type = tok.type;
-    if (tok.type == T_ID || tok.type == T_QUALID || tok.type == T_STRING)
-        buffer.attribute.str = tok.attribute.str;
-    else if (tok.type == T_INT)
-        buffer.attribute.inumber = tok.attribute.inumber;
-    else if (tok.type == T_DOUBLE)
-        buffer.attribute.dnumber = tok.attribute.dnumber;
+    bufferNotEmpty++;
+    if (bufferNotEmpty != 2)
+    {
+        buffer.type = tok.type;
+        if (tok.type == T_ID || tok.type == T_QUALID || tok.type == T_STRING)
+            buffer.attribute.str = tok.attribute.str;
+        else if (tok.type == T_INT)
+            buffer.attribute.inumber = tok.attribute.inumber;
+        else if (tok.type == T_DOUBLE)
+            buffer.attribute.dnumber = tok.attribute.dnumber;
+        else
+            ;
+    }
     else
-        ;
+    {
+        buffer2.type = tok.type;
+        if (tok.type == T_ID || tok.type == T_QUALID || tok.type == T_STRING)
+            buffer2.attribute.str = tok.attribute.str;
+        else if (tok.type == T_INT)
+            buffer2.attribute.inumber = tok.attribute.inumber;
+        else if (tok.type == T_DOUBLE)
+            buffer2.attribute.dnumber = tok.attribute.dnumber;
+        else
+            ;
+    } 
 }
 
 token getToken()
 {
-    if (bufferNotEmpty == 1)
+    if (bufferNotEmpty != 0)
     {
-        bufferNotEmpty = 0;
-        return buffer;
+        bufferNotEmpty--;
+        if (bufferNotEmpty != 0)
+            return buffer2;
+        else
+            return buffer;
     }
     // pomocna promenna pro kontrolu funkci volajicich malloc
     int checkMalloc;

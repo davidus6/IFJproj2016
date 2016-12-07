@@ -96,10 +96,12 @@ void setSourceFile(FILE *f);
 token getToken();
 void ungetToken(token);
 
+char *divideQualid(char *,int);
 int checkQualid(char *);
 
 //globalni promenne pro pripad, kdy syntax an. vraci token
 token buffer;
+token buffer2;
 int bufferNotEmpty; // bude automaticky nastaveno na 0
 
 
