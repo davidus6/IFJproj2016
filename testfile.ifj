@@ -1,0 +1,31 @@
+class Main{
+	static int a;
+	static int b;
+	static int c;
+	static void d(){
+		return;
+	}
+}
+
+class main{
+	static int a;	
+}
+
+/*
+funCall(ID, typ identifikatoru, ID promenne kam se funkce prirazuje, typ ID promenne kam se funkce prirazuje); 
+funCallVoid(ID, typ identifikatoru);
+*/
+/*
+	E->const:	vytvorit lok.promennou (pro const) -> budu chtit char* jak se jmenuje
+				(do nonterminalu E priradit ID promenne const)
+
+	E->ID:		kontrola definice promenne ID
+				(do nonterminalu E priradit ID promenne ID)
+
+	E->(E):		(do nonterminalu E priradit ID z nonterminalu (E) )
+
+	E->E op E:	zkontrolovat jestli je dany typ operace povolen nad datovymy typy Ecek
+				vytvorit lok. promennou (pro to prvni E)
+				(vygenerovat instrukci, kde budou indexy podle ID v tech dvou E)
+	FUNKCE SI POJMENUJ JAK CHCES :D
+*/
