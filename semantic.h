@@ -15,6 +15,7 @@ int stAddClass(char *);
 void stAddStaticVar (char *, dataTypes);
 void stAddFunc(char *, dataTypes);
 void stAddParam(char *, dataTypes);
+void stAddLocalVar(char *, dataTypes);
 
 /**** po konci bloku ****/
 void stEndFunc(nodeVarPtr *);

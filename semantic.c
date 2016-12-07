@@ -43,6 +43,10 @@ void stAddParam(char *key, dataTypes type)
 {
 	insertVar(&(contextFunc)->localTable, key, type);
 }
+void stAddLocalVar(char *key, dataTypes type)
+{
+	insertVar(&(contextFunc)->localTable, key, type);
+}
 
 /* blokove akce */
 /* konec fce */
