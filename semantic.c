@@ -30,30 +30,43 @@ int stAddClass(char *key)	//odstranit gT
 
 void stAddStaticVar(char *key, dataTypes type)
 {
-	insertVar(&(contextClass)->innerVar, key, type);
+	insertVar(&(contextClass)->innerVar, key, type, &globalIndex);
+	globalIndex++;
 }
 
 void stAddFunc(char *key, dataTypes type)
 {
+	stEndFunc();
 	insertFunc(&((contextClass)->innerFunc), key, type);
 	searchFunc((contextClass)->innerFunc , key, &contextFunc);		//do contextFunc ulozi ukazatel na aktualni fci
 }
 
 void stAddParam(char *key, dataTypes type)
 {
-	insertVar(&(contextFunc)->localTable, key, type);
+	insertVar(&(contextFunc)->localTable, key, type, &localIndex);
+	localIndex++;
 }
 void stAddLocalVar(char *key, dataTypes type)
 {
-	insertVar(&(contextFunc)->localTable, key, type);
+	insertVar(&(contextFunc)->localTable, key, type, &localIndex);
+	localIndex++;
+}
+
+void retIndexType(char * varName, int *index, dataTypes *type)
+{
+	nodeVarPtr found;
+	searchVar(contextClass->innerVar, varName, &found);
+	*index = (found)->index;
+	*type = (found)->type;
 }
 
 /* blokove akce */
 /* konec fce */
-void stEndFunc(nodeVarPtr *localTable)
+void stEndFunc()	//nodeVarPtr *localTable pokud bude potreba mazat VarTree
 {
 	contextFunc = NULL;
-	disposeVarTree(localTable);
+	localIndex = 0;
+	//disposeVarTree(localTable);
 }
 
 /* konec programu */

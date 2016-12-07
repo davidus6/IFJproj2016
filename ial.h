@@ -43,6 +43,7 @@ typedef enum
 typedef struct nodeClass 		// uzly hlavniho stromu ve kterem budou tridy
 {
 	char *keyName;
+	bool defined;
 	struct nodeClass *left;
 	struct nodeClass *right;
 	struct nodeFunc *innerFunc;
@@ -52,6 +53,7 @@ typedef struct nodeClass 		// uzly hlavniho stromu ve kterem budou tridy
 /* strom pro promenne */
 typedef struct nodeVar 	
 {
+	int index;
 	dataTypes type;
 	char *keyName;
 	struct nodeVar *left;
@@ -76,7 +78,7 @@ int searchClass(nodeClassPtr, char *, nodeClassPtr *);
 void disposeClassTree(nodeClassPtr *);
 
 void initVarTree(nodeVarPtr *);
-void insertVar(nodeVarPtr *, char *, dataTypes);
+void insertVar(nodeVarPtr *, char *, dataTypes,int *);
 int searchVar(nodeVarPtr, char *, nodeVarPtr *);
 void disposeVarTree(nodeVarPtr *);
 

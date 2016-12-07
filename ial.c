@@ -134,13 +134,14 @@ void initVarTree(nodeVarPtr *root)
 	root = NULL;
 }
 
-void insertVar(nodeVarPtr *root, char *key, dataTypes type)
+void insertVar(nodeVarPtr *root, char *key, dataTypes type, int *index)
 {
 	nodeVarPtr new = malloc(sizeof(struct nodeVar));
 	new->keyName = key;
 	new->type = type;
 	new->left = NULL;
 	new->right = NULL;
+	new->index = *index;
 	if (*root == NULL)
 		*root = new;
 	else
