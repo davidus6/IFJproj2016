@@ -15,7 +15,7 @@
 void initGlobalTable()
 {
 	initClassTree(&globalTable);
-	tempIndex = 25;
+	tempIndex = LOC_LIMIT;
 }
 
 int stAddClass(char *key)	//odstranit gT
@@ -202,7 +202,7 @@ double intToDouble(int convert)
 
 
 /* semanticke funkce pro precedencni analyzu */
-int precConst(char *class, char *function, dataTypes type, char **ret)	
+int precConst(char *class, char *function, dataTypes type, char **ret, int *retIndex)	
 //prvni 2 param je nazev tridy a fce
 //do ret potrebuji poslat vygenerovane id
 {
@@ -226,8 +226,10 @@ int precConst(char *class, char *function, dataTypes type, char **ret)
     	if (checkFound == 0)
     		return SEM_ERROR_UND;
     	insertVar(&(fuNode)->localTable, name.str, type, &tempIndex);
+    	*retIndex = tempIndex;
     	tempIndex++;
     	*ret = name.str;
+    	
     	return OK;
 
     }
@@ -277,7 +279,7 @@ int precVar(char *class, char *function, char *variable, int idType)
 	}
 }
 
-int precOper(char *class, char *function, opType operation, char *ident1, char *ident2, char **retName)
+int precOper(char *class, char *function, opType operation, char *ident1, char *ident2, char **retName, int *retIndex)
 {
 	int checkFound;
 	nodeClassPtr clNode;
@@ -354,7 +356,7 @@ int precOper(char *class, char *function, opType operation, char *ident1, char *
     	else
     	return SEM_ERROR_TYPE;
     }
-    precConst(class, function, retType, retName);
+    precConst(class, function, retType, retName, retIndex);
     return 0;
 	
 }
