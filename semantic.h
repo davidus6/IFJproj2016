@@ -13,6 +13,9 @@
 #include "scanner.h"
 #include "pstack.h"
 
+
+#define LOC_LIMIT 25
+
 void initGlobalTable();
 int stAddClass(char *);
 int stAddStaticVar (char *, dataTypes);
@@ -32,8 +35,9 @@ int stAssignment(char *, int, char *);	//prirazeni, zatim pocitam s tim ze na ob
 
 //jeji index a datovej typ
 void retIndexType(char *, int *, dataTypes *);	//volano po pridani static prom. po jeji definici
-void retITfields();
-
+int retITfields(char *, int *, dataTypes *);	//prvni char MUSI byt qualid - je to id funkce
+//pole indexu, pole datovych type, vracim pocet
+void fillLocal(nodeVarPtr *, int *, dataTypes *, int *); //pomocna fce pro retITfields
 
 
 /**** po konci bloku ****/

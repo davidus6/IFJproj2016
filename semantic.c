@@ -128,6 +128,32 @@ void retIndexType(char * varName, int *index, dataTypes *type)
 	*type = (found)->type;
 }
 
+void fillLocal(nodeVarPtr *root, int *poleInt, dataTypes *poleTypes, int *ret)
+{
+	if (*root != NULL)
+	{
+		fillLocal(&(*root)->left, poleInt, poleTypes, ret);
+		fillLocal(&(*root)->right, poleInt, poleTypes, ret);
+		poleInt[*ret] = (*root)->index;
+		poleTypes[*ret] = (*root)->type;
+		*ret = *ret + 1;
+	}
+}
+
+int retITfields(char *qualFunkce, int *poleInt, dataTypes *poleTypes)
+{
+	char *trida = divideQualid(qualFunkce, 0);
+	char *funkce = divideQualid(qualFunkce, 1);
+	static int ret = 0;
+	nodeClassPtr clNode;
+	nodeFuncPtr fuNode;
+	searchClass(globalTable, trida, &clNode);
+	searchFunc(clNode->innerFunc, funkce, &fuNode);
+	fillLocal(&(fuNode)->localTable, poleInt,  poleTypes, &ret);
+	return ret;
+	
+}
+
 /* blokove akce */
 /* konec fce */
 void stEndFunc()	//nodeVarPtr *localTable pokud bude potreba mazat VarTree
