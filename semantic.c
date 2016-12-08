@@ -16,6 +16,8 @@ void initGlobalTable()
 {
 	initClassTree(&globalTable);
 	tempIndex = LOC_LIMIT;
+	stAddClass("ifj16");
+
 }
 
 int stAddClass(char *key)	//odstranit gT
@@ -280,7 +282,7 @@ int precVar(char *class, char *function, char *variable, int idType)
 	}
 }
 
-int precOper(char *class, char *function, opType operation, char *ident1, char *ident2, char **retName, int *retIndex)
+int precOper(char *class, char *function, opType operation, char *ident1, char *ident2, char **retName, int *indop1, int *indop2, int *retIndex, int *returnType)
 {
 	int checkFound;
 	nodeClassPtr clNode;
@@ -317,6 +319,8 @@ int precOper(char *class, char *function, opType operation, char *ident1, char *
 	}
 	if (vaNode1->type == DATA_BOOL || vaNode2->type == DATA_BOOL)
     	return SYNTAX_ERROR;
+    *indop1 = vaNode1->index;
+    *indop2 = vaNode2->index;
     switch (operation)
     {
     	case OPER_SUB: case OPER_MUL:
@@ -357,6 +361,7 @@ int precOper(char *class, char *function, opType operation, char *ident1, char *
     	else
     	return SEM_ERROR_TYPE;
     }
+    *returnType = (int)retType;
     precConst(class, function, retType, retName, retIndex);
     return 0;
 	

@@ -26,7 +26,8 @@ int stAddLocalVar(char *, dataTypes);
 /* semanticke funkce pro precedencni analyzu */
 int precConst(char *, char *, dataTypes, char **, int *);	//prvni 2 param je nazev tridy a fce 
 int precVar(char *, char *, char *, int);	//trida, fce, promenna, 1=qualif-0=id
-int precOper(char *, char *, opType, char *, char *, char **, int *);	//prvni 2 param je kontext, typ operace, ucastnici, vysledek
+int precOper(char *, char *, opType, char *, char *, char **, int *, int *, int *, int *);	
+//prvni 2 param je kontext, typ operace, ucastnici, vysledek
 //Var s vysledkem musim vytvorit a vratit jeho jmeno a index
 
 
