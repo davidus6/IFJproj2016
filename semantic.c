@@ -8,6 +8,7 @@
 
 #include "semantic.h"
 #include "error_codes.h"
+#include <string.h>
 
 //contextClass = NULL;
 
@@ -32,6 +33,8 @@ int stAddClass(char *key)	//odstranit gT
 
 int stAddStaticVar(char *key, dataTypes type)
 {
+	if (type == DATA_VOID)
+		return SYNTAX_ERROR;
 	nodeVarPtr throwAway;
 	if (searchVar((contextClass)->innerVar, key, &throwAway) == 1)
 		return SEM_ERROR_UND;
@@ -53,15 +56,28 @@ int stAddFunc(char *key, dataTypes type)
 
 int stAddParam(char *key, dataTypes type)
 {
+	if (type == DATA_VOID)
+		return SYNTAX_ERROR;
 	nodeVarPtr throwAway;
 	if (searchVar((contextFunc)->localTable, key, &throwAway) == 1)
 		return SEM_ERROR_UND;
 	insertVar(&(contextFunc)->localTable, key, type, &localIndex);
+	printf("stAddParam: CHECKPOINT 1\n");
+	if (type == DATA_INT)
+		contextFunc->parameters[localIndex] = 'i';
+	else if (type == DATA_DOUBLE)
+		contextFunc->parameters[localIndex] = 'd';
+	else //(type == DATA_STRING)
+		contextFunc->parameters[localIndex] = 's';
+	printf("stAddParam: CHECKPOINT 2\n");
+	printf("stAddParam: CHECKPOINT 3\n");
 	localIndex++;
 	return OK;
 }
 int stAddLocalVar(char *key, dataTypes type)
 {
+	if (type == DATA_VOID)
+		return SYNTAX_ERROR;
 	nodeVarPtr throwAway;
 	if (searchVar((contextFunc)->localTable, key, &throwAway) == 1)
 		return SEM_ERROR_UND;
@@ -235,5 +251,84 @@ int precVar(char *class, char *function, char *variable, int idType)
 	}
 }
 
-/*int precVar();
-int precOper();*/
+int precOper(char *class, char *function, opType operation, char *ident1, char *ident2, char **retName)
+{
+	int checkFound;
+	nodeClassPtr clNode;
+    nodeFuncPtr fuNode;
+    nodeVarPtr vaNode1;
+    nodeVarPtr vaNode2;
+    dataTypes retType;
+	if (function == NULL)
+	{
+		checkFound = searchClass(globalTable, class, &clNode);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	    	checkFound = searchVar(clNode->innerVar, ident1, &vaNode1);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	checkFound = searchVar(clNode->innerVar, ident2, &vaNode2);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+	}
+	else
+	{
+		checkFound = searchClass(globalTable, class, &clNode);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	checkFound = searchFunc(clNode->innerFunc, function, &fuNode);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	checkFound = searchVar(fuNode->localTable, ident1, &vaNode1);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+    	checkFound = searchVar(fuNode->localTable, ident2, &vaNode2);
+    	if (checkFound == 0)
+    		return SEM_ERROR_UND;
+	}
+	if (vaNode1->type == DATA_BOOL || vaNode2->type == DATA_BOOL)
+    	return SYNTAX_ERROR;
+    switch (operation)
+    {
+    	case OPER_SUB: case OPER_MUL:
+    		if (vaNode1->type == DATA_INT && vaNode2->type == DATA_INT)
+    			retType = DATA_INT;
+    		else if (vaNode1->type == DATA_DOUBLE || vaNode2->type == DATA_DOUBLE)
+    			retType = DATA_DOUBLE;
+    		else
+    			return SEM_ERROR_TYPE;
+    	break;
+
+    	case OPER_ADD:
+    		if (vaNode1->type == DATA_INT && vaNode2->type == DATA_INT)
+    			retType = DATA_INT;
+    		else if (vaNode1->type == DATA_STRING || vaNode2->type == DATA_STRING)
+    			retType = DATA_STRING;
+    		else if (vaNode1->type == DATA_DOUBLE || vaNode2->type == DATA_DOUBLE)
+    			retType = DATA_DOUBLE;
+    		else
+    			return SEM_ERROR_TYPE;
+    	break;
+
+    	case OPER_DIV:	//DODELAT nema byt deleni stejne jako - a ??
+    	if (vaNode1->type == DATA_INT && vaNode2->type == DATA_INT)
+    		retType = DATA_INT;
+    	else if (vaNode1->type == DATA_DOUBLE && vaNode2->type == DATA_DOUBLE)
+    		retType = DATA_DOUBLE;
+    	else
+    		return SEM_ERROR_TYPE;
+    	break;
+
+    	default:
+    	if (vaNode1->type == DATA_INT || vaNode1->type == DATA_DOUBLE)
+    		if (vaNode2->type == DATA_INT || vaNode2->type == DATA_DOUBLE)
+    			retType = DATA_BOOL;
+    		else
+    			return SEM_ERROR_TYPE;
+    	else
+    	return SEM_ERROR_TYPE;
+    }
+    precConst(class, function, retType, retName);
+    return 0;
+	
+}

@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include "str.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -32,6 +33,7 @@ typedef enum
 	DATA_DOUBLE,
 	DATA_STRING,
 	DATA_VOID,	//fce nemusi nic vracet
+	DATA_BOOL,
 	DATA_UNKNOWN
 }dataTypes;
 
@@ -43,7 +45,6 @@ typedef enum
 typedef struct nodeClass 		// uzly hlavniho stromu ve kterem budou tridy
 {
 	char *keyName;
-	bool defined;
 	struct nodeClass *left;
 	struct nodeClass *right;
 	struct nodeFunc *innerFunc;
@@ -64,8 +65,8 @@ typedef struct nodeVar
 typedef struct nodeFunc	
 {
 	dataTypes type;
+	char parameters[25];
 	char *keyName;
-	bool defined;
 	struct nodeVar *localTable;
 	struct nodeFunc *left;
 	struct nodeFunc *right;
