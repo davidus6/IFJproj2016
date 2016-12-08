@@ -236,6 +236,7 @@ int precConst(char *class, char *function, dataTypes type, char **ret, int *retI
     else
     {
     	insertVar(&(clNode)->innerVar, name.str, type, &globalIndex);
+    	*retIndex = globalIndex;
     	globalIndex++;
     	*ret = name.str;
     	return OK;
