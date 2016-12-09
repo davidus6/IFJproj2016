@@ -96,6 +96,7 @@ void setSourceFile(FILE *f);
 token getToken();
 void ungetToken(token);
 
+char *makeQualid(char *, char*);
 char *divideQualid(char *,int);
 int checkQualid(char *);
 

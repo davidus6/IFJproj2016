@@ -111,6 +111,26 @@ void tokenInit(token *tok)
     return;
 }
 
+//ze dvou id vytvori jedno qualid
+char *makeQualid(char *id1, char*id2)
+{
+    string str;
+    strInit(&str);
+    int length1 = strlen(id1);
+    int length2 = strlen(id2);
+    for (int i = 0; i < length1; i++)
+    {
+        strAddChar(&str, id1[i]);
+    }
+    strAddChar(&str, '.');
+    for (int j = 0; j < length2; j++)
+    {
+        strAddChar(&str, id2[j]);
+    }
+    return str.str;
+}
+
+
 // rozdeli qualid na 2 identifikatory, vrati jmeno jednoho z nich podle mode
 // mode 0 vraci nazev tridy, jinak nazev funkce/promenne
 char *divideQualid(char *qualid, int mode)
