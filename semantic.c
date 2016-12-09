@@ -9,6 +9,7 @@
 #include "semantic.h"
 #include "error_codes.h"
 #include <string.h>
+#include "instructions.h"
 
 
 void initGlobalTable()
@@ -336,7 +337,6 @@ int precVar(char *class, char *function, char *variable, int idType)
 	nodeClassPtr clNode;
     nodeFuncPtr fuNode;
     nodeVarPtr vaNode;
-    //printf("v precVar: jsem tady\n");
 	if (function == NULL)
 	{
 		checkFound = searchClass(globalTable, class, &clNode);

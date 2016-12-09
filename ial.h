@@ -14,6 +14,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include "str.h"
+#include "instructions.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -66,6 +67,7 @@ typedef struct nodeFunc
 {
 	dataTypes type;
 	char parameters[25];
+	tListItem *instructions;
 	char *keyName;
 	struct nodeVar *localTable;
 	struct nodeFunc *left;
