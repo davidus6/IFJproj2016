@@ -80,15 +80,12 @@ int stAddParam(char *key, dataTypes type)
 	if (searchVar((contextFunc)->localTable, key, &throwAway) == 1)
 		return SEM_ERROR_UND;
 	insertVar(&(contextFunc)->localTable, key, type, &localIndex);
-	printf("stAddParam: CHECKPOINT 1\n");
 	if (type == DATA_INT)
 		contextFunc->parameters[localIndex] = 'i';
 	else if (type == DATA_DOUBLE)
 		contextFunc->parameters[localIndex] = 'd';
 	else //(type == DATA_STRING)
 		contextFunc->parameters[localIndex] = 's';
-	printf("stAddParam: CHECKPOINT 2\n");
-	printf("stAddParam: CHECKPOINT 3\n");
 	localIndex++;
 	return OK;
 }
@@ -102,6 +99,38 @@ int stAddLocalVar(char *key, dataTypes type)
 	insertVar(&(contextFunc)->localTable, key, type, &localIndex);
 	localIndex++;
 	return OK;
+}
+
+int insertInstruct(char *class, char *func, tListItem *instructions)
+{
+	int check;
+	nodeClassPtr clNode;
+	nodeFuncPtr fuNode;
+	check = searchClass(globalTable, class, &clNode);
+	if (check == 0)
+		return SEM_ERROR_UND;
+	check = searchFunc(clNode->innerFunc, func, &fuNode);
+	if (check == 0)
+		return SEM_ERROR_UND;
+	fuNode->instructions = instructions;
+	return OK;
+}
+
+int returnInstruct(char *qualFunc, tListItem **instructions)
+{
+	int check;
+	nodeClassPtr clNode;
+	nodeFuncPtr fuNode;
+	char *class = divideQualid(qualFunc, 0);
+	char *func = divideQualid(qualFunc, 1);
+	check = searchClass(globalTable, class, &clNode);
+	if (check == 0)
+		return SEM_ERROR_UND;
+	check = searchFunc(clNode->innerFunc, func, &fuNode);
+	if (check == 0)
+		return SEM_ERROR_UND;
+	*instructions = fuNode->instructions;
+	return OK; 
 }
 
 //idType == 1 -> je to qualid, == 0 -> je to normal id
