@@ -18,13 +18,32 @@ int readInt ()
 		if ((isdigit(buffer[i])) == 0)
 			return -NUM_ERROR;
 		if (buffer[i+1] == '\n' || buffer[i+1] == EOF)
-			return atoi(buffer);;
+			break;
 	}
 	return atoi(buffer);
 }
-/*
-double readDouble ();
-*/
+
+double readDouble ()
+{
+	char buffer[50];
+	fgets(buffer, sizeof(buffer), stdin);
+	char *check = NULL;
+	if (strtod(buffer, &check) == 0.0)
+	{
+		printf ("%s\n", check);
+		return -NUM_ERROR;
+	}
+	for (int i = 0; i < 50; i++)
+	{
+		//printf("%c %d\n", buffer[i], isdigit(buffer[i]));
+		if ((isdigit(buffer[i]) == 0) && (buffer[i] != 'e') && (buffer[i] != 'E') && (buffer[i] != '.'))
+			return -NUM_ERROR;
+		if (buffer[i+1] == '\n' || buffer[i+1] == EOF)
+			break;
+	}
+	return strtod(buffer, NULL);
+}
+
 char *readString ()
 {
 	string str;

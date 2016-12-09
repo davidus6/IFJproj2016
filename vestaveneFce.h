@@ -2,8 +2,7 @@
 
 
 int readInt ();
-/*
-double readDouble ();*/
+double readDouble ();
 char *readString ();
 
 int length(char *s);
