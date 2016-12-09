@@ -446,3 +446,17 @@ int precOper(char *class, char *function, opType operation, char *ident1, char *
     return 0;
 	
 }
+
+int checkMainRun()
+{
+	nodeClassPtr clNode;
+	nodeFuncPtr fuNode;
+	int check;
+	check = searchClass(globalTable, "Main", &clNode);
+    if (checkFound == 0)
+    	return SEM_ERROR_UND;
+    checkFound = searchFunc(clNode->innerFunc, "run", &fuNode);
+    if (checkFound == 0)
+    	return SEM_ERROR_UND;
+    return OK;
+}

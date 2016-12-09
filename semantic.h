@@ -33,6 +33,7 @@ int precOper(char *, char *, opType, char *, char *, char **, int *, int *, int 
 //prvni 2 param je kontext, typ operace, ucastnici, vysledek
 //Var s vysledkem musim vytvorit a vratit jeho jmeno a index
 
+int checkMainRun();
 
 int stAssignment(char *, int, char *);	//prirazeni, zatim pocitam s tim ze na obou stranach je promenna
 
