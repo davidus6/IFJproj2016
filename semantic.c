@@ -10,14 +10,30 @@
 #include "error_codes.h"
 #include <string.h>
 
-//contextClass = NULL;
 
 void initGlobalTable()
 {
 	initClassTree(&globalTable);
 	tempIndex = LOC_LIMIT;
 	stAddClass("ifj16");
-
+	stAddFunc("readInt", DATA_INT);
+	stAddFunc("readDouble", DATA_DOUBLE);
+	stAddFunc("readString", DATA_STRING);
+	stAddFunc("print", DATA_VOID);	//jak budou parametry?
+	stAddFunc("length", DATA_INT);
+	stAddParam("s", DATA_STRING);
+	stAddFunc("substr", DATA_STRING);
+	stAddParam("s", DATA_STRING);
+	stAddParam("i", DATA_INT);
+	stAddParam("n", DATA_INT);
+	stAddFunc("compare", DATA_INT);
+	stAddParam("s1", DATA_STRING);
+	stAddParam("s2", DATA_STRING);
+	stAddFunc("find", DATA_INT);
+	stAddParam("s", DATA_STRING);
+	stAddParam("search", DATA_STRING);
+	stAddFunc("sort", DATA_STRING);
+	stAddParam("s", DATA_STRING);
 }
 
 int stAddClass(char *key)	//odstranit gT
@@ -139,6 +155,41 @@ void fillLocal(nodeVarPtr *root, int *poleInt, dataTypes *poleTypes, int *ret)
 		poleInt[*ret] = (*root)->index;
 		poleTypes[*ret] = (*root)->type;
 		*ret = *ret + 1;
+	}
+}
+
+int retGlobIndex(char *class, char *func, char *var, int *index)
+{
+	int check;
+	nodeClassPtr clNode;
+	nodeFuncPtr fuNode;
+	nodeVarPtr vaNode;
+	if (class == NULL && func == NULL)
+	{
+		char *trida = divideQualid(var, 0);
+		char *prom = divideQualid(var, 1);
+		check = searchClass(globalTable, trida, &clNode);
+		if (check == 0)
+			return SEM_ERROR_UND;
+		check = searchVar(clNode->innerVar, prom, &vaNode);
+		if (check == 0)
+			return SEM_ERROR_UND;
+		*index = vaNode->index;
+		return OK;
+	}
+	else
+	{
+		check = searchClass(globalTable, class, &clNode);
+		if (check == 0)
+			return SEM_ERROR_UND;
+		check = searchFunc(clNode->innerFunc, func, &fuNode);
+		if (check == 0)
+			return SEM_ERROR_UND;
+		check = searchVar(fuNode->localTable, var, &vaNode);
+		if (check == 0)
+			return SEM_ERROR_UND;
+		*index = vaNode->index;
+		return OK;
 	}
 }
 
