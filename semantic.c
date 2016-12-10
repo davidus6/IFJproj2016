@@ -227,7 +227,7 @@ int retITfields(char *qualFunkce, int *poleInt, dataTypes *poleTypes)
 {
 	char *trida = divideQualid(qualFunkce, 0);
 	char *funkce = divideQualid(qualFunkce, 1);
-	static int ret = 0;
+	int ret = 0;
 	nodeClassPtr clNode;
 	nodeFuncPtr fuNode;
 	searchClass(globalTable, trida, &clNode);
@@ -379,7 +379,7 @@ int precOper(char *class, char *function, opType operation, char *ident1, char *
 		checkFound = searchClass(globalTable, class, &clNode);
     	if (checkFound == 0)
     		return SEM_ERROR_UND;
-    	    	checkFound = searchVar(clNode->innerVar, ident1, &vaNode1);
+    	checkFound = searchVar(clNode->innerVar, ident1, &vaNode1);
     	if (checkFound == 0)
     		return SEM_ERROR_UND;
     	checkFound = searchVar(clNode->innerVar, ident2, &vaNode2);

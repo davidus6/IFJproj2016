@@ -1,8 +1,10 @@
-/************error_codes.h************
- *
- *hlavička hlavička hlavička
- *    
- */
+/***** error_codes *****
+*
+*     Implementace interpretu imperativního jazyka IFJ16
+*     Tým 029, varianta b/3/I
+*     Autori: Janecek David, Jiruska Adam
+*     
+*/
 
 
 
