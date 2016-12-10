@@ -1,8 +1,19 @@
+#ifndef PARSER_DEF
+#define PARSER_DEF
+
 #include "scanner.h"
 #include "prec.h"
 #include "error_codes.h"
 #include "semantic.h"
+#include "ial.h"
+#include "instructions.h"
 
+#define TRYHARD 1
+#define EASY 0
+
+tInstrList instructionList;
+int mode;
+void generateInstruction(int insType, dataTypes dataType, void*, int op1, int op2, int res);
 int runParser();
 int prog();
 int classes();
@@ -16,7 +27,9 @@ int param_rest();
 int body(int def);
 int stat_list(int def);
 int stat(int def); //def- 1=povoleno 0=zakaz
-int stat_rest(char *id);
+int stat_rest(token id);
 int arguments();
 int arguments_rest();
 int arg();
+
+#endif

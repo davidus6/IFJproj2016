@@ -1,34 +1,52 @@
+#ifndef INSTRUCTIONS
+#define INSTRUCTIONS
+
 #include <malloc.h>
 
 //typy instrukci
 typedef enum insType{
-	I_ADD,
-	I_SUB,
-	I_MUL,
-	I_DIV,
-	I_CMP,
+	I_ADD,		//0
+	I_SUB,		//1
+	I_MUL,		//2
+	I_DIV,		//3
+	I_CMP,		//4
 	
-	I_READ,
-	I_WRITE,
-	I_STOP,
-	I_LABEL,
+	I_READ,		//5
+	I_WRITE,	//6
+	I_STOP,		//7
+	I_LABEL,	//8
 
-	I_CALL,
-	I_FRAMEC,
-	I_FRAMED,
-	I_RETURN,
+	I_CALL,		//9
+	I_FRAMEC,	//10
+	I_PUSHP,	//11
+	I_FRAMED,	//12
+	I_RETURN,	//13
 
-	I_BLOCKC,
-	
-	I_GOTO
+	I_BLOCKC,	//14
+	I_ASSIGN,	//15
+
+	I_GOTO		//16
 } insType;
+
+
+typedef enum
+{
+	DATA_INT,
+	DATA_DOUBLE,
+	DATA_STRING,
+	DATA_VOID,	//fce nemusi nic vracet
+	DATA_BOOL,
+	DATA_UNKNOWN
+}dataTypes;
 
 typedef struct
 {
 	int insType; //typ instrukce
-	void *op1; //operand1
-	void *op2; //operand2
-	void *res; //vysledek
+	dataTypes dataType; //typ dat
+	void *ptr; //ukazatel kam je potreba :)
+	int op1; //operand1
+	int op2; //operand2
+	int res; //vysledek
 } tInstr;
 
 typedef struct listItem
@@ -50,4 +68,6 @@ void destroyList(tInstrList *L);
 void activateFirst(tInstrList *L);
 void nextInstruction(tInstrList *L);
 tInstr *getInstruction(tInstrList *L);
-void goToInstr(tInstrList *L, void *GTWhere);
+void goToInstr(tInstrList *L, tListItem *GTWhere);
+
+#endif

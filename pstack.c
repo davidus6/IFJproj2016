@@ -31,8 +31,11 @@ void pStackPush(pStack *S, pStackItem *item){
 			break;
 		case 4:
 			S->top->dataType = 4;
-			S->top->data.p = item->data.p;
+			S->top->data.s = item->data.s;
 			break;
+		case 5:
+			S->top->dataType = 5;
+			S->top->data.s = item->data.s;
 		default:
 			return;
 	}
@@ -55,9 +58,8 @@ void pStackDestroy(pStack *S){
 	S->size = 0;
 }
 
-pStackItem *pStackTop(pStack *S){
-	//kdyz je nahore neterminal tak jdem na minulej
-	return S->top;
+pStackItem pStackTop(pStack *S){
+	return *S->top;
 }
 
 pStackItem *pStackTermTop(pStack *S){

@@ -2,6 +2,9 @@
 
 #include "error_codes.h"
 
+#ifndef PSTACK_DEF
+#define PSTACK_DEF
+
 //stack pro precedencku
 typedef enum 
 {
@@ -31,7 +34,6 @@ typedef struct pStackItem{
 		int i;
 		double d;
 		char *s;
-		void *p;
 	} data;
 	struct pStackItem *prev;
 } pStackItem;
@@ -45,5 +47,7 @@ void pStackInit(pStack *S);
 void pStackPush(pStack *S, pStackItem *item);
 int pStackPop(pStack *S);
 void pStackDestroy(pStack *S);
-pStackItem *pStackTop (pStack *S); //vraci prvek na vrcholu 
+pStackItem pStackTop (pStack *S); //vraci prvek na vrcholu 
 pStackItem *pStackTermTop (pStack *S); //vraci terminal nejbliz vrcholu
+
+#endif

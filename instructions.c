@@ -1,5 +1,6 @@
 #include "instructions.h"
 
+
 //funkce inicializuje seznam instrukci
 void initList(tInstrList *L){
 	L->First = NULL;
@@ -45,10 +46,12 @@ void nextInstruction(tInstrList *L){
 
 //fce vrati aktivni instrukci
 tInstr *getInstruction(tInstrList *L){
-	return &L->Act->Instruction;
+	if (L->Act != NULL)
+		return &L->Act->Instruction;
+	return NULL;
 }
 
 //fce nastavi aktivitu na instrukci danou ukazatelem
-void goToInstr(tInstrList *L, void *GTWhere){
-	L->Act = (tListItem*) GTWhere;
+void goToInstr(tInstrList *L, struct listItem *GTWhere){
+	L->Act = GTWhere;
 }

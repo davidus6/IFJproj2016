@@ -1,9 +1,15 @@
+#ifndef STACK_DEF
+#define STACK_DEF
+
 #include <malloc.h>
 #include <stdbool.h>
+#include "instructions.h"
+
+#define LOC_DATASIZE 50
 
 typedef struct frameData{
-//informace o funkci
-	int bla;
+	tListItem *returnAddr;
+	void *localData[LOC_DATASIZE];
 } frameData;
 
 typedef struct frame{
@@ -19,4 +25,7 @@ typedef struct {
 void initStack(tStack *S);
 void pushStack(tStack *S, frameData *F);
 void popStack(tStack *S);
+frameData topStack (tStack *S);
 bool emptyStack(tStack *S);
+
+#endif
