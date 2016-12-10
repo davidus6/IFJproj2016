@@ -28,15 +28,7 @@ void errorHandle(int);
 
 /**** tabulka symbolu ****/
 
-typedef enum
-{
-	DATA_INT,
-	DATA_DOUBLE,
-	DATA_STRING,
-	DATA_VOID,	//fce nemusi nic vracet
-	DATA_BOOL,
-	DATA_UNKNOWN
-}dataTypes;
+
 
 
 
@@ -67,7 +59,7 @@ typedef struct nodeFunc
 {
 	dataTypes type;
 	char parameters[25];
-	tListItem *instructions;
+	tInstrList *instructions;
 	char *keyName;
 	struct nodeVar *localTable;
 	struct nodeFunc *left;

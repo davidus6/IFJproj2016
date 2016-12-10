@@ -23,8 +23,8 @@ int stAddFunc(char *, dataTypes);
 int stAddParam(char *, dataTypes);
 int stAddLocalVar(char *, dataTypes);
 
-int insertInstruct(char *, char *, tListItem *);	//trida, fce, instrukcni paska
-int returnInstruct(char *, tListItem **);	//vzdy qualid fce, instrukcni paska na ulozeni
+int insertInstruct(char *, char *, tInstrList *);	//trida, fce, instrukcni paska
+int returnInstruct(char *, tInstrList **);	//vzdy qualid fce, instrukcni paska na ulozeni
 
 /* semanticke funkce pro precedencni analyzu */
 int precConst(char *, char *, dataTypes, char **, int *);	//prvni 2 param je nazev tridy a fce 

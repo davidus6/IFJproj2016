@@ -102,7 +102,7 @@ int stAddLocalVar(char *key, dataTypes type)
 	return OK;
 }
 
-int insertInstruct(char *class, char *func, tListItem *instructions)
+int insertInstruct(char *class, char *func, tInstrList *instructions)
 {
 	int check;
 	nodeClassPtr clNode;
@@ -117,7 +117,7 @@ int insertInstruct(char *class, char *func, tListItem *instructions)
 	return OK;
 }
 
-int returnInstruct(char *qualFunc, tListItem **instructions)
+int returnInstruct(char *qualFunc, tInstrList **instructions)
 {
 	int check;
 	nodeClassPtr clNode;
@@ -176,18 +176,6 @@ void retIndexType(char * varName, int *index, dataTypes *type)
 	*type = (found)->type;
 }
 
-void fillLocal(nodeVarPtr *root, int *poleInt, dataTypes *poleTypes, int *ret)
-{
-	if (*root != NULL)
-	{
-		fillLocal(&(*root)->left, poleInt, poleTypes, ret);
-		fillLocal(&(*root)->right, poleInt, poleTypes, ret);
-		poleInt[*ret] = (*root)->index;
-		poleTypes[*ret] = (*root)->type;
-		*ret = *ret + 1;
-	}
-}
-
 int retGlobIndex(char *class, char *func, char *var, int *index)
 {
 	int check;
@@ -220,6 +208,18 @@ int retGlobIndex(char *class, char *func, char *var, int *index)
 			return SEM_ERROR_UND;
 		*index = vaNode->index;
 		return OK;
+	}
+}
+
+void fillLocal(nodeVarPtr *root, int *poleInt, dataTypes *poleTypes, int *ret)
+{
+	if (*root != NULL)
+	{
+		fillLocal(&(*root)->left, poleInt, poleTypes, ret);
+		fillLocal(&(*root)->right, poleInt, poleTypes, ret);
+		poleInt[*ret] = (*root)->index;
+		poleTypes[*ret] = (*root)->type;
+		*ret = *ret + 1;
 	}
 }
 
