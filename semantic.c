@@ -327,10 +327,14 @@ int precConst(char *class, char *function, dataTypes type, char **ret, int *retI
 }
 
 //kontrola definice ID
-int precVar(char *class, char *function, char *variable, int idType)
+int precVar(char *cl, char *func, char *var, int idType)
 {
+	char *class = cl;
+	char *function = func;
+	char *variable = var;
 	if (idType == 1)
 	{
+		class = divideQualid(variable, 0);
 		variable = divideQualid(variable, 1);
 	}
 	int checkFound;
@@ -453,10 +457,10 @@ int checkMainRun()
 	nodeFuncPtr fuNode;
 	int check;
 	check = searchClass(globalTable, "Main", &clNode);
-    if (checkFound == 0)
+    if (check == 0)
     	return SEM_ERROR_UND;
-    checkFound = searchFunc(clNode->innerFunc, "run", &fuNode);
-    if (checkFound == 0)
+    check = searchFunc(clNode->innerFunc, "run", &fuNode);
+    if (check == 0)
     	return SEM_ERROR_UND;
     return OK;
 }
