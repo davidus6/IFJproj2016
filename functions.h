@@ -18,6 +18,6 @@ int ifj16find(char * s, char * search);
 char *ifj16substr(char * s, int i, int n);
 
 char *ifj16sort(char *);
-void ifj16shellSort(char [],int);
+//void ifj16shellSort(char [],int);
 
 void ifj16print(char *);

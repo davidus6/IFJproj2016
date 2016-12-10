@@ -159,7 +159,7 @@ char *ifj16sort(char *sorted)
 	return sorted;
 }
 
-void ifj16shellSort(char str[],int n)
+/*void ifj16shellSort(char str[],int n)
 {
 	int i, j, step;
 	char temp;
@@ -182,7 +182,7 @@ void ifj16shellSort(char str[],int n)
 		else
 			step = (int) (step / 2.2);
 	}
-}
+}*/
 
 
 void ifj16print(char *string)
