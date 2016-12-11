@@ -9,6 +9,7 @@
 #define FUNCTIONS_DECLARED
 #include "ial.h"
 
+
 int ifj16readInt ();
 double ifj16readDouble ();
 char *ifj16readString ();
@@ -21,7 +22,7 @@ char *ifj16substr(char * s, int i, int n);
 
 char *ifj16sort(char *);
 //void ifj16shellSort(char [],int);
-void hlPring(int);
+void hlPrint(int);
 void ifj16print(char *);
 
 #endif

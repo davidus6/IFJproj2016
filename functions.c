@@ -16,6 +16,7 @@
 #include "error_codes.h"
 #include "str.h"
 #include "ial.h"
+#include "stack.h"
 
 
 int ifj16readInt ()
