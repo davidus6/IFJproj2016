@@ -628,9 +628,9 @@ int runInterpret(){
 					*(int*)frameStack.top->data->localData[I->op1] = ret;
 				} else if (strcmp(I->ptr, "ifj16.find") == 0){
 					pushStack(&frameStack, prepFrame);
-					//int ret = ifj16find(frameStack.top->data->localData[0], frameStack.top->data->localData[1]);
+					int ret = ifj16find(frameStack.top->data->localData[0], frameStack.top->data->localData[1]);
 					popStack(&frameStack);
-					//*(int*)frameStack.top->data->localData[I->op1] = ret;
+					*(int*)frameStack.top->data->localData[I->op1] = ret;
 				} else if (strcmp(I->ptr, "ifj16.substr") == 0){
 					pushStack(&frameStack, prepFrame);
 					char *ret = ifj16substr(frameStack.top->data->localData[0], *(int*)frameStack.top->data->localData[1], *(int*)frameStack.top->data->localData[2]);
