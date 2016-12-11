@@ -16,7 +16,6 @@
 #include "error_codes.h"
 #include "str.h"
 #include "ial.h"
-#include "interpret.h"
 #include "stack.h"
 
 
@@ -187,11 +186,23 @@ char *ifj16sort(char *sorted)
 	}
 }*/
 
-void hlPrint(int n)
+void hlPrint(int n, char types[10])
 {
 	for (int i = 0; i < n; i++)
 	{
-		ifj16print((char *)frameStack.top->data->localData[i]);
+		if (types[i] == 0)	//int
+		{
+			char *str;
+			sprintf(str, "%d", (int *)frameStack.top->data->localData[i]);
+			ifj16print(str);
+		}
+		else if (types[i] == 1)	//double
+		{
+			sprintf(str, "%g", (double *)frameStack.top->data->localData[i]);
+			ifj16print(str);
+		}
+		else	//string
+			ifj16print((char *)frameStack.top->data->localData[i]);
 	}
 }
 
