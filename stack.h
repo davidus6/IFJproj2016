@@ -8,6 +8,8 @@
 #define LOC_DATASIZE 50
 
 typedef struct frameData{
+	void *returnWhere;
+	tInstrList *returnFunc;
 	tListItem *returnAddr;
 	void *localData[LOC_DATASIZE];
 } frameData;
@@ -17,7 +19,7 @@ typedef struct frame{
 	struct frame *prev;
 } frame;
 
-typedef struct {
+typedef struct tStack{
 	struct frame *top;
 	int size;
 } tStack;
@@ -25,7 +27,7 @@ typedef struct {
 void initStack(tStack *S);
 void pushStack(tStack *S, frameData *F);
 void popStack(tStack *S);
-frameData topStack (tStack *S);
+frameData *topStack (tStack *S);
 bool emptyStack(tStack *S);
 
 #endif

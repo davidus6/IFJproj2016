@@ -9,7 +9,7 @@ typedef enum insType{
 	I_SUB,		//1
 	I_MUL,		//2
 	I_DIV,		//3
-	I_CMP,		//4
+	I_LT,		//4
 	
 	I_READ,		//5
 	I_WRITE,	//6
@@ -25,7 +25,13 @@ typedef enum insType{
 	I_BLOCKC,	//14
 	I_ASSIGN,	//15
 
-	I_GOTO		//16
+	I_GOTO,		//16
+	I_GT,		//17
+	I_LET,		//18
+	I_GET,		//19
+	I_EQ,		//20
+	I_NEQ,		//21
+	I_RUNRUN	//22
 } insType;
 
 
@@ -53,9 +59,10 @@ typedef struct listItem
 {
 	tInstr Instruction;
 	struct listItem *nextIns;
+	struct listItem *prevIns;
 } tListItem;
 
-typedef struct 
+typedef struct tInstrList
 {
 	struct listItem *First;  //ukazatel na prvni instrukci
 	struct listItem *Last;   //ukazatel na posledni instrukci
@@ -69,5 +76,6 @@ void activateFirst(tInstrList *L);
 void nextInstruction(tInstrList *L);
 tInstr *getInstruction(tInstrList *L);
 void goToInstr(tInstrList *L, tListItem *GTWhere);
+void print_elements_of_list(tInstrList TL);
 
 #endif

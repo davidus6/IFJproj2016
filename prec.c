@@ -1,6 +1,6 @@
 #include "prec.h"
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define debug_print printf
 #else 
@@ -177,8 +177,8 @@ int runPrecedence(){
 					case OPER_I: 
 					debug_print("provadim pravidlo ");	//pravidlo E -> i
 						//tady muze krome identifikatoru bejt jeste konstanta---nevyreseny
-						//printf("currentClass = %s\n", currentClass);
-						//printf("currentFunc = %s\n", currentFunction);
+						//debug_print("currentClass = %s\n", currentClass);
+						//debug_print("currentFunc = %s\n", currentFunction);
 						stackTop = pStackTop(&stack);
 						char *name;
 						int index;
@@ -188,7 +188,7 @@ int runPrecedence(){
 							if (mode == TRYHARD){
 								dataTypes dt = stackTop.dataType - 1;
 								int ret = precConst(currentClass, currentFunction, dt, &name, &index);
-								printf("E->const index %d\n", index);
+								debug_print("E->const index %d\n", index);
 								//generovat instrukci co nacte to cislo do pameti na misto pro name
 								if (currentFunction == NULL){ //je to globalne
 									switch(stackTop.dataType){
@@ -211,7 +211,7 @@ int runPrecedence(){
 									switch(stackTop.dataType){
 										case 1:
 											generateInstruction(I_ASSIGN, DATA_INT, NULL, 0, stackTop.data.i, index);
-											printf("index kam = %d\n", index);
+											debug_print("index kam = %d\n", index);
 											break;
 										case 2:
 											generateInstruction(I_ASSIGN, DATA_DOUBLE, NULL, 0, stackTop.data.d, index);
@@ -237,8 +237,8 @@ int runPrecedence(){
 							if (mode == TRYHARD){
 								int dt = stackTop.dataType - 4;
 								int ret = precVar(currentClass, currentFunction, stackTop.data.s, dt);
-								printf("stacktop data = %s a dt = %d\n", stackTop.data.s, dt);
-								printf("ret ====== %d\n", ret);
+								debug_print("stacktop data = %s a dt = %d\n", stackTop.data.s, dt);
+								debug_print("ret ====== %d\n", ret);
 								if (ret != OK){
 									return ret;
 								}
@@ -274,7 +274,8 @@ int runPrecedence(){
 						break;
 
 					case OPER_ADD: case OPER_SUB: case OPER_MUL: case OPER_DIV: case OPER_LT:
-					case OPER_GT: case OPER_LET: case OPER_GET: case OPER_EQ: case OPER_NEQ: //pravidlo E op E
+					case OPER_GT: case OPER_LET: case OPER_GET: case OPER_EQ: case OPER_NEQ: ;//pravidlo E op E
+						opType optype = term->type;
 						debug_print("provadim pravidlo E -> E op E\n");
 						pStackItem op2 = pStackTop(&stack);
 						pStackPop(&stack);
@@ -290,16 +291,92 @@ int runPrecedence(){
 							int indexop1, indexop2, indexres;
 							int resDataType;
 							precOper(currentClass,currentFunction, operator.type, op1.data.s, op2.data.s, &nameres, &indexop1, &indexop2, &indexres, &resDataType);
-							//generuju instrukci pro soucet 
 							item.dataType = resDataType-1;//DATATYPE SI MUSIM NECHAT POSLAT
 							item.data.s = nameres;
-							printf("index vysledku operace %d a indexy operandu %d a %d\n", indexres, indexop1, indexop2);
+							debug_print("index vysledku operace %d a indexy operandu %d a %d\n", indexres, indexop1, indexop2);
 							if (currentFunction == NULL){ //je to globalne
-								generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
-								generateInstruction(I_ADD, resDataType, currentFunction, indexop1, indexop2,indexres);
+								switch (optype){
+									case OPER_ADD:
+										generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
+										generateInstruction(I_ADD, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_SUB:
+										generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
+										generateInstruction(I_SUB, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_MUL: 
+										generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
+										generateInstruction(I_MUL, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_DIV:
+										generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
+										generateInstruction(I_DIV, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break; 
+									case OPER_LT:
+										generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
+										generateInstruction(I_LT, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_GT:
+										generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
+										generateInstruction(I_GT, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_LET:
+										generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
+										generateInstruction(I_LET, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_GET:
+										generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
+										generateInstruction(I_GET, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_EQ:
+										generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
+										generateInstruction(I_EQ, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_NEQ:
+										generateInstruction(I_BLOCKC, resDataType, NULL, 1, indexres, 0);
+										generateInstruction(I_NEQ, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									default:
+										return SYNTAX_ERROR;
+										break;
+								}
 							} else {
 								//generateInstruction(I_BLOCKC, resDataType, NULL, 0, indexres, 0);
-								generateInstruction(I_ADD, resDataType, currentFunction, indexop1, indexop2,indexres);
+								switch (optype){
+									case OPER_ADD:
+										generateInstruction(I_ADD, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_SUB:
+										generateInstruction(I_SUB, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_MUL:
+										generateInstruction(I_MUL, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_DIV:
+										generateInstruction(I_DIV, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_LT:
+										generateInstruction(I_LT, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_GT:
+										generateInstruction(I_GT, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_LET:
+										generateInstruction(I_LET, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_GET:
+										generateInstruction(I_GET, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_EQ:
+										generateInstruction(I_EQ, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									case OPER_NEQ:
+										generateInstruction(I_NEQ, resDataType, currentFunction, indexop1, indexop2,indexres);
+										break;
+									default:
+										return SYNTAX_ERROR;
+										break;
+								}
 							}
 						}
 						item.type = NONTERM_E;

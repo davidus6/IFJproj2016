@@ -11,11 +11,13 @@ void pStackInit(pStack *S){
 void pStackPush(pStack *S, pStackItem *item){
 	struct pStackItem *ptr = S->top;
 	S->top = malloc(sizeof(struct pStackItem));
+	S->top->data.s = NULL;
 	S->top->type = item->type;
 	S->top->prev = ptr;
 	switch(item->dataType){
 		case 0:
 			S->top->dataType = 0;
+			S->top->data.i = 0;
 			break;
 		case 1:
 			S->top->dataType = 1;
@@ -37,6 +39,8 @@ void pStackPush(pStack *S, pStackItem *item){
 			S->top->dataType = 5;
 			S->top->data.s = item->data.s;
 		default:
+			S->top->dataType = 0;
+			S->top->data.i = 0;
 			return;
 	}
 }

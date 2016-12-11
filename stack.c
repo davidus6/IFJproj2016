@@ -25,8 +25,8 @@ void popStack (tStack *S) {
 	}
 }	
 
-frameData topStack (tStack *S) {
-		return *S->top->data;
+frameData *topStack (tStack *S) {
+		return S->top->data;
 }
 
 bool emptyStack (tStack *S) {

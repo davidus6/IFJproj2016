@@ -11,7 +11,10 @@
 #define TRYHARD 1
 #define EASY 0
 
-tInstrList instructionList;
+tInstrList globalInstrList;
+tInstrList *currentInstrList;
+int printArgs;
+
 int mode;
 void generateInstruction(int insType, dataTypes dataType, void*, int op1, int op2, int res);
 int runParser();

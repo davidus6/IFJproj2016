@@ -27,4 +27,8 @@ I_GOTO 	 skok (podminka,x,adresa)
 (I_ASSIGN, datovy typ, pripadnej string, lok/glob, index odkud, index kam);
 (I_ADD, datovy typ, lok/glob, index1, index2, index kam);
 (I_FRAMEC, 0, id funkce, 0,0,0);
-(I_PUSHP, dt neni potreba, NULL, lok/glob, index odkud, 0);
+(I_PUSHP, datovy typ, NULL, lok/glob, index odkud, 0);
+(I_CALL, dt neni potreba, ukazatel na pasku fce, index promenne kam priradime, 
+			je to prirazeni do lok/glob promenne, <0 = void...1 = lok...2 = glob>
+			je to vestavena funkce?? 1=ANO);
+(I_RETURN, dt neni potreba, NULL, budu vracet ano1/ne0, 0, kde je vysledek co budu vracet);

@@ -1,3 +1,6 @@
 #include "semantic.h"
+#include "stack.h"
 
-int runInterpret(tInstrList *instrList);
+tStack frameStack;
+
+int runInterpret();
