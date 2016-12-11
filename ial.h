@@ -1,9 +1,10 @@
 /***** ial.h *****
 *
-*	Implementace interpretu imperativního jazyka IFJ16
-*	Tým 029, varianta b/3/I
-*	Autori: Janecek David, Jiruska Adam
-*	
+*     Implementace interpretu imperativního jazyka IFJ16
+*     Tým 029, varianta b/3/I
+*     Autori: Jiruska Adam, Janecek David
+*     Login: xjirus01, xjanec28
+*     
 */
 
 #ifndef IAL_DEFINED
@@ -23,9 +24,6 @@
 void shellSort(char [],int);
 void preProc(char *, int , int [256]);
 int boyerMoore(char *, char *, int, int);
-
-//DODELAT umazat az bude vse pohromade
-void errorHandle(int);
 
 
 /**** tabulka symbolu ****/
