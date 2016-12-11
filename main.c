@@ -1,162 +1,88 @@
-/***** main.c *****
-*
-*	Implementace interpretu imperativního jazyka IFJ16
-*	Tým 029, varianta b/3/I
-*	Autori: Janecek David, Jiruska Adam
-*	
-*/
-
-#include "ial.h"
-#include "semantic.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+#include "instructions.h"
+#include "stack.h"
+#include "interpret.h"
+#include "parser.h"
 #include "error_codes.h"
+#include "scanner.h"
+#include "str.h"
 
-void errorHandle(int value)
-{
-	exit(value);
-}
+int main(int argc, char *argv[]){
 
-void printFuncTree(nodeFuncPtr *);
-void printVarTree(nodeVarPtr *);
-
-void printClassTree(nodeClassPtr *root)	//nejdrive tiskne veci ve tride, pak tridu
-{
-	if (*root != NULL)
-	{
-		printFuncTree(&(*root)->innerFunc);
-		printVarTree(&(*root)->innerVar);
-		printf("**************Class: %s\n", (*root)->keyName);
-		printClassTree(&(*root)->left);
-		printClassTree(&(*root)->right);
-	}
-}
-
-void printFuncTree(nodeFuncPtr *root)
-{
-	if (*root != NULL)
-	{
-		printVarTree(&(*root)->localTable);
-		printf("**************Func: %s\n", (*root)->keyName);
-		printFuncTree(&(*root)->left);
-		printFuncTree(&(*root)->right);
-	}
-}
-
-void printVarTree(nodeVarPtr *root)
-{
-	if(*root != NULL)
-	{
-		printf("**************Var: %s\n", (*root)->keyName);
-		printVarTree(&(*root)->left);
-		printVarTree(&(*root)->right);
-	}
-}
-
-int main()
-{
-	/* pretypovani, asi na hovno
-
-
-	double convert = 42.89;
-	int converted;
-	converted = doubleToInt(convert);
-	int Dconvert = 24;
-	double Dconverted;
-	Dconverted = intToDouble (Dconvert);
-	printf ("%d\n", converted);
-	printf ("%f\n", Dconverted);	*/
-
-	//shellSort("dickinson", 9);
-
-	/* testovaci staticke promenne */
-	/*int i = 0;
-	dataVar testVariableInt;
-	testVariableInt.dataType = DATA_INT;
-	testVariableInt.index = ++i;
-	testVariableInt.defined = true;
-	testVariableInt.initialised = true;
-	testVariableInt.data.iNum = 42;
-	dataVar testVariableDouble;
-	testVariableDouble.dataType = DATA_DOUBLE;
-	testVariableDouble.index = ++i;
-	testVariableDouble.defined = true;
-	testVariableDouble.initialised = true;
-	testVariableDouble.data.dNum = 42e1;
-	dataVar testVariableString;
-	testVariableString.dataType = DATA_STRING;
-	testVariableString.index = ++i;
-	testVariableString.defined = true;
-	testVariableString.initialised = true;
-	testVariableString.data.string = "fml";*/
-	/* testovaci staticke promenne */
-
-	//"globalni" promenne
-	//globalTable = NULL;	//NENI POTREBA
-	//contextClass = NULL;
-	//contextFunc = NULL;
-	//testClass = NULL;
-
+	FILE *f;
+	  if (argc != 2)
+	  {
+	    fprintf(stderr, "Wrong arguments\n");
+	    return INTER_ERROR;
+	  }
+	  if ((f = fopen(argv[1], "r")) == NULL)
+	    {
+	      fprintf(stderr, "Cannot open the file\n");
+	      return INTER_ERROR;
+	    }
+	    
+	setSourceFile(f);
 	initGlobalTable();
 
-	printf ("---vytisknu si prazdny strom---\n");
-	printClassTree (&globalTable);
-	/* vlozim tridu */
-
-	stAddClass("trida shit");
-	printf("\n---contextClass---\n");
-	printf("contextClass key :%s\n\n", (contextClass)->keyName);
-
-	printf ("---vytisknu si strom---\n\n");
-	printClassTree(&globalTable);
-
-	int found = searchClass(globalTable, "trida shit", &testClass);
-	printf ("---nasel jsem? -- %d -- melo by byt 1---\n", found);
-	found = searchClass(globalTable, "trida shit", &testClass);
-	printf ("---nasel jsem? -- %d -- melo by byt 1---\n", found);
-	found = searchClass (globalTable, "damn", &testClass);
-	printf ("---nasel jsem? -- %d -- melo by byt 0---\n", found);
-	printf("v mainu: -----------------------------checkpoint0\n");
-
-	printf("v mainu: -----------------------------checkpoint1\n");
-	stAddClass("trida totalshit");
-	printf("v mainu: -----------------------------checkpoint2\n");
-
-	printf ("---vytisknu si strom---\n");
-	printClassTree(&globalTable);
-
-	printf("\n---contextClass---\n");
-	printf("contextClass key :%s\n\n", (contextClass)->keyName);
-
-	/* vlozim static promenne do dane tridy */
-	/*insertInner(&(globalTable->inner), NODE_VAR, "testVariableInt", &testVariableInt);
-	insertInner(&(globalTable->inner), NODE_VAR, "testVariableDouble", &testVariableDouble);
-	insertInner(&(globalTable->inner), NODE_VAR, "testVariableString", &testVariableString);*/
-	printf("v mainu: -----------------------------checkpoint4\n");
-	printf("pridam funkci int a parametr int\n");
-	stAddFunc("funkce int", DATA_INT);
-	printf("\n---contextFunc---\n");
-	printf("contextFunc key :%s\n\n", (contextFunc)->keyName);
-	printf("v mainu: -----------------------------checkpoint5\n");
-
-	printf ("---vytisknu si strom---\n");
-	printClassTree(&globalTable);
-
+	int ret = runParser();
+	if (ret == OK){
+			ret = checkMainRun();
+			if (ret == OK){
+				ret = runInterpret();
+				if (ret == OK){
+					return OK;
+				}
+			}
+	}
 	
-	stAddFunc("funkce void", DATA_VOID);
-	printf("v mainu: -----------------------------checkpoint5.1\n");
-	printf("\n---contextFunc---\n");
-	printf("contextFunc key :%s\n\n", (contextFunc)->keyName);
-	printf("v mainu: -----------------------------checkpoint6\n");
+	switch(ret){
+		case LEX_ERROR:
+			fprintf(stderr, "Lexical error\n");
+			return ret;
+			break;
+		case SYNTAX_ERROR:
+			fprintf(stderr, "Syntax error\n");
+			return ret;
+			break;
+		case SEM_ERROR_UND:
+			fprintf(stderr, "Semantic error\n");
+			return ret;
+			break;
+		case SEM_ERROR_TYPE:
+			fprintf(stderr, "Semantic error\n");
+			return ret;
+			break;
+		case SEM_ERROR_OTH:
+			fprintf(stderr, "Semantic error\n");
+			return ret;
+			break;
+		case NUM_ERROR:
+			fprintf(stderr, "Input error\n");
+			return ret;
+			break;
+		case UNIT_ERROR:
+			fprintf(stderr, "Use of uninitialized value\n");
+			return ret;
+			break;
+		case DIV_ERROR:
+			fprintf(stderr, "Division by zero\n");
+			return ret;
+			break;
+		case RUN_ERROR:
+			fprintf(stderr, "Runtime error\n");
+			return ret;
+			break;
+		case INTER_ERROR:
+			fprintf(stderr, "Internal error\n");
+			return ret;
+			break;
+	}
 
-	stAddParam("param int", DATA_INT);
-	printf("v mainu: -----------------------------checkpoint7\n");
-
-	
-	printf ("---vytisknu si strom---\n");
-	printClassTree(&globalTable);
-
-	stEndProg (&globalTable);
-	printf ("---vytisknu si prazdny strom---\n");
-	printClassTree(&globalTable);
-	return 0;
+	destroyList(currentInstrList);
+	stEndProg();
+	return ret;
 }
