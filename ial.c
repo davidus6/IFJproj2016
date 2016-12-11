@@ -2,11 +2,9 @@
 *
 *	Implementace interpretu imperativního jazyka IFJ16
 *	Tým 029, varianta b/3/I
-*	Autori: Jiruska Adam, Janecek David
-*	Login: xjirus01, xjanec28
+*	Autori: Janecek David, Jiruska Adam
 *	
 */
-
 
 #include "ial.h"
 #include <string.h>
@@ -30,8 +28,53 @@ void shellSort(char str[],int n)
 			}
 		str[j] = temp;
 		}
-		step = step / 2;
+		if (step == 2)
+			step = 1;
+		else
+			step = (int) (step / 2.2);
 	}
+}
+
+void preProc(char *str, int size, int badCharArray[256])
+{
+	int i;
+	//nejdrive vsechny hodnoty na -1
+	for (i = 0; i < 256; i++)
+	{
+         badCharArray[i] = -1;
+	}
+	//vsechny co tam jsou na hodnoty posledniho vyskytu
+	for (i = 0; i < size; i++)
+	{
+         badCharArray[(int) str[i]] = i;
+	}
+}
+
+int boyerMoore(char *str, char *substr, int length1, int length2)
+{
+ 
+    int badCharArray[256];
+    preProc(substr, length2, badCharArray);
+    int shift = 0;  //posun podretezce vuci retezci
+    while(shift <= (length1 - length2))
+    {
+        int j = length2 - 1;
+        //snizuji j dokud se shoduji
+        while(j >= 0 && substr[j] == str[shift+j])
+        {
+            j--;
+        }
+        // pokud se nasel, bude j = -1
+        if (j < 0)
+        {
+            return shift;
+        }
+        else
+        {
+        	shift++;	
+        }
+    }
+    return -1;	//nenalezeno
 }
 
 
@@ -41,7 +84,7 @@ void initClassTree(nodeClassPtr *root)
 	root = NULL;
 }
 
-void insertClass(nodeClassPtr *root, char *key)
+void insertClass(nodeClassPtr *root, char *key) //DODELAT kdyz uz tam klic je tak error, nebo check jestli uz bylo blabla
 {
 	nodeClassPtr new = malloc(sizeof(struct nodeClass));
 	new->keyName = key;

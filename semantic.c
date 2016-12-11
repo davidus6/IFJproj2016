@@ -2,8 +2,7 @@
 *
 *	Implementace interpretu imperativního jazyka IFJ16
 *	Tým 029, varianta b/3/I
-*	Autori: Jiruska Adam, Janecek David
-*	Login: xjirus01, xjanec28
+*	Autori: Janecek David, Jiruska Adam
 *	
 */
 
@@ -48,8 +47,8 @@ void initGlobalTable()
 	stAddParam("s", DATA_STRING);
 }
 
-int stAddClass(char *key)
-{
+int stAddClass(char *key)	//odstranit gT
+{		// DODELAT sracka s ifj16 - jesto to chce promyslet
 	nodeClassPtr throwAway;
 	if (searchClass(globalTable, key, &throwAway) == 1)	//nechci aby mi to prepsalo kontex nebo neco
 		return SEM_ERROR_UND;
@@ -182,8 +181,7 @@ int stAssignment(char *key1, int idType, char *key2)
 void retIndexType(char * varName, int *index, dataTypes *type)
 {
 	nodeVarPtr found;
-	int ret = searchVar(contextClass->innerVar, varName, &found);
-	printf("ret = %d\n", ret);
+	searchVar(contextClass->innerVar, varName, &found);
 	*index = (found)->index;
 	*type = (found)->type;
 }
@@ -476,5 +474,8 @@ int checkMainRun()
     check = searchFunc(clNode->innerFunc, "run", &fuNode);
     if (check == 0)
     	return SEM_ERROR_UND;
-    return OK;
+    if (fuNode->type == DATA_VOID)
+    	return OK;
+    else
+    	return SEM_ERROR_UND;
 }

@@ -1,10 +1,9 @@
 /***** functions.c *****
 *
-*	Implementace interpretu imperativního jazyka IFJ16
-*	Tým 029, varianta b/3/I
-*	Autori: Jiruska Adam, Janecek David
-*	Login: xjirus01, xjanec28
-*	
+*   Implementace interpretu imperativního jazyka IFJ16
+*   Tým 029, varianta b/3/I
+*   Autori: Janecek David, Jiruska Adam
+*   
 */
 
 #include <stdlib.h>
@@ -131,7 +130,14 @@ int ifj16compare(char * s1, char * s2)
 		return -1;
 }
 
-int ifj16find(char * s, char * search);
+int ifj16find(char * s, char * search)
+{
+	if (search[0] == '\0')
+		return 0;
+	int a = strlen(s);
+	int b = strlen(search);
+	return boyerMoore(s, search, a, b);
+}
 
 char *ifj16substr(char * s, int i, int n)
 {
@@ -161,31 +167,6 @@ char *ifj16sort(char *sorted)
 	}
 	return sorted;
 }
-
-/*void ifj16shellSort(char str[],int n)
-{
-	int i, j, step;
-	char temp;
-	step = n / 2;
-	while (step > 0)
-	{
-		for (i = step; i < n; i++)
-		{
-			j = i;
-			temp = str[i];
-			while ((j >= step) && (str[j-step] > temp))
-			{
-				str[j] = str[j-step];
-				j = j - step;
-			}
-		str[j] = temp;
-		}
-		if (step == 2)
-			step = 1;
-		else
-			step = (int) (step / 2.2);
-	}
-}*/
 
 void hlPrint(int n, int types[10])
 {
