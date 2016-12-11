@@ -17,7 +17,7 @@
 #include "str.h"
 #include "ial.h"
 #include "stack.h"
-
+#include "interpret.h"
 
 int ifj16readInt ()
 {
