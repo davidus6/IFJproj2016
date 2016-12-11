@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define debug_print printf
 #else 
@@ -639,7 +639,7 @@ int stat(int def){	//OK<stat> -> <data_type> ID <definition_rest> ; --definice l
 					int ret = runPrecedence();
 					if (mode == TRYHARD){
 						condIndex = tempIndex;
-						printf("tempIndex = %d\n", tempIndex);
+						debug_print("tempIndex = %d\n", tempIndex);
 					}
 					if (ret == OK){
 						ret = body(0);

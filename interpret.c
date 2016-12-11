@@ -17,7 +17,7 @@
 #include "functions.h"
 #include "parser.h"
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define debug_print printf
 #else 
@@ -166,7 +166,7 @@ int runInterpret(){
 		case I_GOTO:
 			debug_print("interpret: I_GOTO\n");
 			debug_print("goto podminka index = %d\n", I->res);
-			printf("podminka = %d\n", *(int*)frameStack.top->data->localData[I->res]);
+			debug_print("podminka = %d\n", *(int*)frameStack.top->data->localData[I->res]);
 			int cond = *(int*)frameStack.top->data->localData[I->res];
 			if ( cond == 1){
 				goToInstr(currentInstrList, I->ptr);
@@ -452,7 +452,6 @@ int runInterpret(){
 							} else {
 								*((int*)frameStack.top->data->localData[I->res]) = 0;
 							}
-							//printf("porovnavam %d s %d\n -- vysledek %d\n", *((int*)frameStack.top->data->localData[I->op1]), *((int*)frameStack.top->data->localData[I->op2]), *((int*)frameStack.top->data->localData[I->res]));
 							break;
 						case DATA_DOUBLE:
 							*((double*)frameStack.top->data->localData[I->res]) = *((double*)frameStack.top->data->localData[I->op1]) == *((double*)frameStack.top->data->localData[I->op2]);
@@ -609,32 +608,39 @@ int runInterpret(){
 					*(int*)frameStack.top->data->localData[I->op1] = ret;
 				} else if (strcmp(I->ptr, "ifj16.readDouble") == 0){
 					pushStack(&frameStack, prepFrame);
-					
+					double ret = ifj16readDouble();
 					popStack(&frameStack);
+					*(double*)frameStack.top->data->localData[I->op1] = ret;
 				} else if (strcmp(I->ptr, "ifj16.readString") == 0){
 					pushStack(&frameStack, prepFrame);
-					
+					char *ret = ifj16readString();
 					popStack(&frameStack);
+					frameStack.top->data->localData[I->op1] = ret;
 				} else if (strcmp(I->ptr, "ifj16.length") == 0){
 					pushStack(&frameStack, prepFrame);
-					
+					int ret = ifj16length(frameStack.top->data->localData[0]);
 					popStack(&frameStack);
+					*(int*)frameStack.top->data->localData[I->op1] = ret;
 				} else if (strcmp(I->ptr, "ifj16.compare") == 0){
 					pushStack(&frameStack, prepFrame);
-					
+					int ret = ifj16compare(frameStack.top->data->localData[0], frameStack.top->data->localData[1]);
 					popStack(&frameStack);
+					*(int*)frameStack.top->data->localData[I->op1] = ret;
 				} else if (strcmp(I->ptr, "ifj16.find") == 0){
 					pushStack(&frameStack, prepFrame);
-					
+					//int ret = ifj16find(frameStack.top->data->localData[0], frameStack.top->data->localData[1]);
 					popStack(&frameStack);
+					//*(int*)frameStack.top->data->localData[I->op1] = ret;
 				} else if (strcmp(I->ptr, "ifj16.substr") == 0){
 					pushStack(&frameStack, prepFrame);
-					
+					char *ret = ifj16substr(frameStack.top->data->localData[0], *(int*)frameStack.top->data->localData[1], *(int*)frameStack.top->data->localData[2]);
 					popStack(&frameStack);
+					frameStack.top->data->localData[I->op1] = ret;
 				} else if (strcmp(I->ptr, "ifj16.sort") == 0){
 					pushStack(&frameStack, prepFrame);
-					
+					char *ret = ifj16sort(frameStack.top->data->localData[0]);
 					popStack(&frameStack);
+					frameStack.top->data->localData[I->op1] = ret;
 				}
 			}
 			break;
