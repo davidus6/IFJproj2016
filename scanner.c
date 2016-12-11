@@ -112,6 +112,7 @@ void tokenInit(token *tok)
 }
 
 //ze dvou id vytvori jedno qualid
+//prvni musi prijit nazev tridy, pak prom nebo funkc
 char *makeQualid(char *id1, char*id2)
 {
     string str;

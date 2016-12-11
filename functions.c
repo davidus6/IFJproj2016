@@ -192,13 +192,13 @@ void hlPrint(int n, int types[10])
 	{
 		if (types[i] == 0)	//int
 		{
-			char str [50];
+			char str[50];
 			sprintf(str, "%d", *(int *)frameStack.top->data->localData[i]);
 			ifj16print(str);
 		}
 		else if (types[i] == 1)	//double
 		{
-			char str [50];
+			char str[50];
 			sprintf(str, "%g", *(double *)frameStack.top->data->localData[i]);
 			ifj16print(str);
 		}
