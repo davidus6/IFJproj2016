@@ -5,6 +5,8 @@
 *   Autori: Janecek David, Jiruska Adam
 *   
 */
+#ifndef FUNCTIONS_DECLARED
+#define FUNCTIONS_DECLARED
 #include "ial.h"
 
 int ifj16readInt ();
@@ -21,3 +23,5 @@ char *ifj16sort(char *);
 //void ifj16shellSort(char [],int);
 void hlPring(int);
 void ifj16print(char *);
+
+#endif
