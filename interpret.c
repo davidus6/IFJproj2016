@@ -17,7 +17,7 @@
 #include "functions.h"
 #include "parser.h"
 
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define debug_print printf
 #else 
@@ -165,8 +165,12 @@ int runInterpret(){
 
 		case I_GOTO:
 			debug_print("interpret: I_GOTO\n");
-			//skok v programu
-			//goToInstr(currentInstrList, I->ptr);
+			debug_print("goto podminka index = %d\n", I->res);
+			printf("podminka = %d\n", *(int*)frameStack.top->data->localData[I->res]);
+			int cond = *(int*)frameStack.top->data->localData[I->res];
+			if ( cond == 1){
+				goToInstr(currentInstrList, I->ptr);
+			}
 			break;
 
 		case I_LABEL:
@@ -186,7 +190,8 @@ int runInterpret(){
 							*((double*)globalData[I->res]) = *((double*)globalData[I->op1]) + *((double*)globalData[I->op2]);
 							break;
 						case DATA_STRING:
-							//konkatenace retezcu
+							strcpy(globalData[I->res], (char*)globalData[I->op1]);
+							strcat(globalData[I->res], (char*)globalData[I->op2]);
 							break;
 						default:
 							break;
@@ -201,7 +206,8 @@ int runInterpret(){
 							*((double*)frameStack.top->data->localData[I->res]) = *((double*)frameStack.top->data->localData[I->op1]) + *((double*)frameStack.top->data->localData[I->op2]);
 							break;
 						case DATA_STRING:
-							//konkatenace retezcu
+							strcpy(frameStack.top->data->localData[I->res], (char*)frameStack.top->data->localData[I->op1]);
+							strcat(frameStack.top->data->localData[I->res], (char*)frameStack.top->data->localData[I->op2]);
 							break;
 						default:
 							break;
@@ -424,22 +430,29 @@ int runInterpret(){
 		case I_EQ:
 			debug_print("interpret: I_EQ\n");
 			if (I->ptr == NULL){ //globalne
+				debug_print("jedem globalne\n");
 				switch(I->dataType){
-					debug_print("jedem globalne\n");
-						case DATA_INT:
-							*((int*)globalData[I->res]) = *((int*)globalData[I->op1]) == *((int*)globalData[I->op2]);
+						case DATA_BOOL:
+							*((int*)globalData[I->res]) = (*((int*)globalData[I->op1]) == *((int*)globalData[I->op2]));
 							break;
 						case DATA_DOUBLE:
-							*((double*)globalData[I->res]) = *((double*)globalData[I->op1]) == *((double*)globalData[I->op2]);
+							*((double*)globalData[I->res]) = (*((double*)globalData[I->op1]) == *((double*)globalData[I->op2]));
 							break;
 						default:
 							break;
 				}
 			} else { //lokalne
+				debug_print("jedem lokalne\n");
+				debug_print("I->RES = %d I->op1 %d I->op2 %d\n", I->res, I->op1, I->op2);
+				debug_print("porovnavam %d s %d\n", (*((int*)frameStack.top->data->localData[I->op1])), (*((int*)frameStack.top->data->localData[I->op2])));
 				switch(I->dataType){
-					debug_print("jedem lokalne\n");
-						case DATA_INT:
-							*((int*)frameStack.top->data->localData[I->res]) = *((int*)frameStack.top->data->localData[I->op1]) == *((int*)frameStack.top->data->localData[I->op2]);
+						case DATA_BOOL:
+							if ((*((int*)frameStack.top->data->localData[I->op1])) == (*((int*)frameStack.top->data->localData[I->op2]))){
+								*((int*)frameStack.top->data->localData[I->res]) = 1;
+							} else {
+								*((int*)frameStack.top->data->localData[I->res]) = 0;
+							}
+							//printf("porovnavam %d s %d\n -- vysledek %d\n", *((int*)frameStack.top->data->localData[I->op1]), *((int*)frameStack.top->data->localData[I->op2]), *((int*)frameStack.top->data->localData[I->res]));
 							break;
 						case DATA_DOUBLE:
 							*((double*)frameStack.top->data->localData[I->res]) = *((double*)frameStack.top->data->localData[I->op1]) == *((double*)frameStack.top->data->localData[I->op2]);
@@ -570,34 +583,30 @@ int runInterpret(){
 
 		case I_CALL:
 			debug_print("interpret: I_CALL\n");
-			debug_print("printArgs = %d\n", (printArgs+1));
-			if (I->res == 0){
-				//debug_print("bude proveden skok na instrukci %d\n", (tListItem*)I->ptr->Instruction.insType);
-				//prepFrame->returnAddr = malloc(sizeof(tListItem*));
+			if (I->dataType == DATA_INT){
 				prepFrame->returnAddr = currentInstrList->Act;
 				prepFrame->returnFunc = currentInstrList;
 				if (I->op2 == 1){
-					prepFrame->returnWhere = prepFrame->localData[I->op1];
+					prepFrame->returnWhere = frameStack.top->data->localData[I->op1];
 				} else if (I->op2 == 2){
 					prepFrame->returnWhere = globalData[I->op1];
 				} else {
 					prepFrame->returnWhere = NULL;
-				}
-				debug_print("\n\ncall: adresa na topu %p\na davam adresu %p\n\n", (void*)frameStack.top->data->returnFunc, (void*)currentInstrList);
+				};
 				pushStack(&frameStack, prepFrame);
 				debug_print("instrukce pro navrat je %d\n", frameStack.top->data->returnAddr->Instruction.insType);
-				//goToInstr(currentInstrList, (tListItem*)I->ptr);
 				currentInstrList = (tInstrList*)I->ptr;
 				activateFirst(currentInstrList);
 			} else {
 				if (strcmp(I->ptr, "ifj16.print") == 0){
 					pushStack(&frameStack, prepFrame);
-					hlPrint((printArgs+1), dataArray);
+					hlPrint((I->res + 1), dataArray);
 					popStack(&frameStack);
 				} else if (strcmp(I->ptr, "ifj16.readInt") == 0){
 					pushStack(&frameStack, prepFrame);
-					
+					int ret = ifj16readInt();
 					popStack(&frameStack);
+					*(int*)frameStack.top->data->localData[I->op1] = ret;
 				} else if (strcmp(I->ptr, "ifj16.readDouble") == 0){
 					pushStack(&frameStack, prepFrame);
 					
@@ -633,11 +642,12 @@ int runInterpret(){
 		case I_RETURN:
 			debug_print("interpret: I_RETURN\n");
 			debug_print("chci se vratit na funkci %p\n", (void*)lastFrame->returnFunc);
+			debug_print("vracim %d\n", *(int*)lastFrame->localData[I->res]);
 			//debug_print("chci se vratit na instrukci %d\n", lastFrame->returnAddr->Instruction.insType);//frameStack.top->data->returnAddr->Instruction.insType);
 			//goToInstr(instrList, frameStack.top->data->returnAddr);
 			//goToInstr(currentInstrList, lastFrame->returnAddr);
 			if (I->op1 == 1){
-				lastFrame->returnWhere = lastFrame->localData[I->res];
+				*((int*)lastFrame->returnWhere) = *(int*)lastFrame->localData[I->res];
 			}
 			currentInstrList = lastFrame->returnFunc;
 			goToInstr(currentInstrList, lastFrame->returnAddr);

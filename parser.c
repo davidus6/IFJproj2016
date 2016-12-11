@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define debug_print printf
 #else 
@@ -221,8 +221,162 @@ int definition_rest(char *id, int dataType, int context){	 	//<definition_rest> 
 			break;
 
 		case TO_ASSIGN: ;
+
+
+			tok = getToken(); if (tok.type == T_ERROR){return tok.attribute.inumber;}
+			
+			if (tok.type == T_ID || tok.type == T_QUALID){
+				token tok2 = getToken(); if (tok2.type == T_ERROR){return tok2.attribute.inumber;}
+				
+				if (tok2.type == TD_L_BRACKET){
+					debug_print("                  <function call ID = %s + assign to id %s>\n", tok.attribute.str, id);
+							
+
+						////potreba doresit lok/glob u promenny do ktery se to prirazuje
+
+							if (tok.type == T_ID){ //je to lokalni volani? --0
+								if (mode == TRYHARD){
+									char *qualID;
+									qualID = makeQualid(currentClass, tok.attribute.str);					
+									generateInstruction(I_FRAMEC, 0, qualID, 0,0,0);
+									//funCall(id.attribute.str, 0, tok.attribute.str);
+								}
+							} else { // nebo pres qualid? --1
+								if (mode == TRYHARD){
+									generateInstruction(I_FRAMEC, 0,tok.attribute.str, 0,0,0);
+									//funCall(id.attribute.str, 1, tok.attribute.str);
+								}
+							}
+					int ret = arguments();
+					if(ret == OK){
+						token semi = getToken(); if (semi.type == T_ERROR){return semi.attribute.inumber;}
+						if (semi.type == TD_SEMICOLON){
+							if (mode == EASY){
+								if (context){
+									//debug_print("         <static variable ID = %s dataType = %d>\n", id, dataType);
+									int ret = stAddStaticVar(id, dataType);
+									if (ret != OK){
+										return ret;
+									}
+									int index;
+									dataTypes nenipotreba;
+									retIndexType(id, &index, &nenipotreba);
+									generateInstruction(I_BLOCKC, dataType, NULL, 1, index,0);
+								} else {
+									//debug_print("         <local variable ID = %s dataType = %d>\n", id, dataType);
+									int ret = stAddLocalVar(id, dataType);
+									if (ret != OK){
+										return ret;
+									}
+								}
+							}
+							if (mode == TRYHARD){
+								if (tok.type == T_ID){ //volani lokalni funkce
+									
+									tInstrList *funcStart;
+									char *qualID;
+									qualID = makeQualid(currentClass, tok.attribute.str);
+									returnInstruct(qualID, &funcStart);
+
+									if(!context){ //prirazeni do lokalni promenne
+										int index, asdf;
+										retGlobIndex(currentClass, currentFunction, id, &index, &asdf);
+										generateInstruction(I_CALL, 0, (tInstrList*)funcStart, index,1,0);
+									} else { //prirazeni do globalni promenne
+										int index, asdf;
+										retGlobIndex(NULL, NULL, id, &index, &asdf);
+										generateInstruction(I_CALL, 0, (tInstrList*)funcStart, index,2,0);
+									}
+								} else { //volani globalni funkce
+									
+									tInstrList *funcStart;
+									returnInstruct(tok.attribute.str, &funcStart);
+
+									if(!context){ //prirazeni do lokalni promenne
+										int index, asdf;
+										retGlobIndex(currentClass, currentFunction, id, &index, &asdf);
+										if (strcmp(tok.attribute.str, "ifj16.print") == 0){
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.print\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, 0, 0, printArgs);
+										} else if (strcmp(tok.attribute.str, "ifj16.readInt") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readInt\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.readDouble") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readDouble\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.readString") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readString\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.length") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.length\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.compare") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.compare\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.find") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.find\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.substr") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.substr\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.sort") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.sort\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else {
+											generateInstruction(I_CALL, 0, (tInstrList*)funcStart, index,1,0);
+										}
+									} else { //prirazeni do globalni promenne
+										int index, asdf;
+										retGlobIndex(NULL, NULL, id, &index, &asdf);
+										if (strcmp(tok.attribute.str, "ifj16.print") == 0){
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.print\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, 0, 0, printArgs);
+										} else if (strcmp(tok.attribute.str, "ifj16.readInt") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readInt\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.readDouble") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readDouble\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.readString") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readString\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.length") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.length\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.compare") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.compare\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.find") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.find\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.substr") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.substr\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.sort") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.sort\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else {
+											generateInstruction(I_CALL, 0, (tInstrList*)funcStart, index,2,0);
+										}
+									}
+								}
+							}
+							return OK;
+						}
+					}
+					return SYNTAX_ERROR;
+				} else {
+					ungetToken(tok2);
+					ungetToken(tok);
+				}
+			} else {
+				ungetToken(tok);
+			}
+
+
+
+
 			int ret = runPrecedence();
-			//debug_print("PSA = %d\n", ret);
 			if (ret == OK){
 				token tok2 = getToken(); if (tok2.type == T_ERROR){return tok2.attribute.inumber;}
 				if (tok2.type == TD_SEMICOLON){
@@ -259,7 +413,6 @@ int definition_rest(char *id, int dataType, int context){	 	//<definition_rest> 
 							retGlobIndex(currentClass,currentFunction,id , &index, &asdf);
 							debug_print("generuju local I_ASSIGN z indexu %d na index %d\n", (tempIndex-1), (localIndex-1));
 							generateInstruction(I_ASSIGN, dataType, NULL, 2, (tempIndex-1), index);
-							//generateInstruction(I_WRITE, dataType, NULL, 0,index,0);
 							//VOLANI FUNKCE PRO KONTROLU PRIRAZENI
 						}
 						return OK;
@@ -456,7 +609,6 @@ int stat(int def){	//OK<stat> -> <data_type> ID <definition_rest> ; --definice l
 				if (tok.type == TD_L_BRACKET){
 					ungetToken(tok);
 					int ret = runPrecedence();
-					//debug_print("precedencka vratila %d\n", ret);
 					if (ret == OK){
 						ret = body(0);
 						if(ret == OK){
@@ -474,14 +626,27 @@ int stat(int def){	//OK<stat> -> <data_type> ID <definition_rest> ; --definice l
 				return SYNTAX_ERROR;
 				break;
 
-			case TK_WHILE:
+			case TK_WHILE: ;
+				tListItem *whileLabel;
+				if (mode == TRYHARD){
+					generateInstruction(I_LABEL,0,0,0,0,0);
+					whileLabel = currentInstrList->Last;
+				}
+				int condIndex;
 				tok = getToken(); if (tok.type == T_ERROR){return tok.attribute.inumber;}
 				if (tok.type == TD_L_BRACKET){
 					ungetToken(tok);
 					int ret = runPrecedence();
+					if (mode == TRYHARD){
+						condIndex = tempIndex;
+						printf("tempIndex = %d\n", tempIndex);
+					}
 					if (ret == OK){
 						ret = body(0);
 						if (ret == OK){
+							if (mode == TRYHARD){
+								generateInstruction(I_GOTO, 0, (tListItem*)whileLabel, 0, 0, condIndex);
+							}
 							debug_print("                  <while statement>\n");
 							return OK;
 						}
@@ -575,7 +740,7 @@ int stat_rest(token id){	//<stat_rest> -> = <expression> ;
 							if (tok.type == T_ID){ //je to lokalni volani? --0
 								if (mode == TRYHARD){
 									char *qualID;
-									qualID = makeQualid(currentClass, currentFunction);					
+									qualID = makeQualid(currentClass, tok.attribute.str);					
 									generateInstruction(I_FRAMEC, 0, qualID, 0,0,0);
 									//funCall(id.attribute.str, 0, tok.attribute.str);
 								}
@@ -594,7 +759,7 @@ int stat_rest(token id){	//<stat_rest> -> = <expression> ;
 									
 									tInstrList *funcStart;
 									char *qualID;
-									qualID = makeQualid(currentClass, currentFunction);
+									qualID = makeQualid(currentClass, tok.attribute.str);
 									returnInstruct(qualID, &funcStart);
 
 									if(id.type == T_ID){ //prirazeni do lokalni promenne
@@ -614,11 +779,69 @@ int stat_rest(token id){	//<stat_rest> -> = <expression> ;
 									if(id.type == T_ID){ //prirazeni do lokalni promenne
 										int index, asdf;
 										retGlobIndex(currentClass, currentFunction, id.attribute.str, &index, &asdf);
-										generateInstruction(I_CALL, 0, (tInstrList*)funcStart, index,1,0);
+										if (strcmp(tok.attribute.str, "ifj16.print") == 0){
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.print\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, 0, 0, printArgs);
+										} else if (strcmp(tok.attribute.str, "ifj16.readInt") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readInt\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.readDouble") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readDouble\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.readString") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readString\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.length") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.length\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.compare") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.compare\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.find") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.find\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.substr") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.substr\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.sort") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.sort\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else {
+											generateInstruction(I_CALL, 0, (tInstrList*)funcStart, index,1,0);
+										}
 									} else { //prirazeni do globalni promenne
 										int index, asdf;
 										retGlobIndex(NULL, NULL, id.attribute.str, &index, &asdf);
-										generateInstruction(I_CALL, 0, (tInstrList*)funcStart, index,2,0);
+										if (strcmp(tok.attribute.str, "ifj16.print") == 0){
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.print\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, 0, 0, printArgs);
+										} else if (strcmp(tok.attribute.str, "ifj16.readInt") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readInt\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.readDouble") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readDouble\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.readString") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.readString\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.length") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.length\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.compare") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.compare\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.find") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.find\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.substr") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.substr\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else if (strcmp(tok.attribute.str, "ifj16.sort") == 0) {
+											debug_print("/parser: nalezeno volani vestavene funkce ifj16.sort\n");
+											generateInstruction(I_CALL, DATA_DOUBLE, tok.attribute.str, index, 0, 0);
+										} else {
+											generateInstruction(I_CALL, 0, (tInstrList*)funcStart, index,2,0);
+										}
 									}
 								}
 							}
@@ -641,13 +864,16 @@ int stat_rest(token id){	//<stat_rest> -> = <expression> ;
 					debug_print("                  <assign ID = %s>\n", id.attribute.str);
 					if(mode == TRYHARD){
 						int index;
-						dataTypes nenipotreba;
-						;
-						retIndexType(id.attribute.str, &index, &nenipotreba);
+						int nenipotreba;
+						if (id.type == T_ID){
+							retGlobIndex(currentClass, currentFunction, id.attribute.str, &index, &nenipotreba);
+						} else {
+							retGlobIndex(NULL, NULL, id.attribute.str, &index, &nenipotreba);
+						}
 						if(currentFunction == NULL){
 							generateInstruction(I_ASSIGN, nenipotreba, NULL, 3, globalIndex, index);
 						} else {
-							generateInstruction(I_ASSIGN, nenipotreba, NULL, 2, tempIndex, index);
+							generateInstruction(I_ASSIGN, nenipotreba, NULL, 2, (tempIndex-1), index);
 						}
 						
 					}
@@ -717,31 +943,31 @@ int stat_rest(token id){	//<stat_rest> -> = <expression> ;
 							returnInstruct(id.attribute.str, &funcStart);
 							if (strcmp(id.attribute.str, "ifj16.print") == 0){
 								debug_print("/parser: nalezeno volani vestavene funkce ifj16.print\n");
-								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+								generateInstruction(I_CALL, DATA_DOUBLE, id.attribute.str, 0, 0, printArgs);
 							} else if (strcmp(id.attribute.str, "ifj16.readInt") == 0) {
 								debug_print("/parser: nalezeno volani vestavene funkce ifj16.readInt\n");
-								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+								generateInstruction(I_CALL, DATA_DOUBLE, id.attribute.str, 0, 0, 0);
 							} else if (strcmp(id.attribute.str, "ifj16.readDouble") == 0) {
 								debug_print("/parser: nalezeno volani vestavene funkce ifj16.readDouble\n");
-								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+								generateInstruction(I_CALL, DATA_DOUBLE, id.attribute.str, 0, 0, 0);
 							} else if (strcmp(id.attribute.str, "ifj16.readString") == 0) {
 								debug_print("/parser: nalezeno volani vestavene funkce ifj16.readString\n");
-								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+								generateInstruction(I_CALL, DATA_DOUBLE, id.attribute.str, 0, 0, 0);
 							} else if (strcmp(id.attribute.str, "ifj16.length") == 0) {
 								debug_print("/parser: nalezeno volani vestavene funkce ifj16.length\n");
-								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+								generateInstruction(I_CALL, DATA_DOUBLE, id.attribute.str, 0, 0, 0);
 							} else if (strcmp(id.attribute.str, "ifj16.compare") == 0) {
 								debug_print("/parser: nalezeno volani vestavene funkce ifj16.compare\n");
-								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+								generateInstruction(I_CALL, DATA_DOUBLE, id.attribute.str, 0, 0, 0);
 							} else if (strcmp(id.attribute.str, "ifj16.find") == 0) {
 								debug_print("/parser: nalezeno volani vestavene funkce ifj16.find\n");
-								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+								generateInstruction(I_CALL, DATA_DOUBLE, id.attribute.str, 0, 0, 0);
 							} else if (strcmp(id.attribute.str, "ifj16.substr") == 0) {
 								debug_print("/parser: nalezeno volani vestavene funkce ifj16.substr\n");
-								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+								generateInstruction(I_CALL, DATA_DOUBLE, id.attribute.str, 0, 0, 0);
 							} else if (strcmp(id.attribute.str, "ifj16.sort") == 0) {
 								debug_print("/parser: nalezeno volani vestavene funkce ifj16.sort\n");
-								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+								generateInstruction(I_CALL, DATA_DOUBLE, id.attribute.str, 0, 0, 0);
 							} else {
 								generateInstruction(I_CALL, 0, (tInstrList*)funcStart, 0,0,0);
 							}
