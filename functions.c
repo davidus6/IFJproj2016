@@ -186,19 +186,20 @@ char *ifj16sort(char *sorted)
 	}
 }*/
 
-void hlPrint(int n, char types[10])
+void hlPrint(int n, int types[10])
 {
 	for (int i = 0; i < n; i++)
 	{
 		if (types[i] == 0)	//int
 		{
-			char *str;
-			sprintf(str, "%d", (int *)frameStack.top->data->localData[i]);
+			char str [50];
+			sprintf(str, "%d", *(int *)frameStack.top->data->localData[i]);
 			ifj16print(str);
 		}
 		else if (types[i] == 1)	//double
 		{
-			sprintf(str, "%g", (double *)frameStack.top->data->localData[i]);
+			char str [50];
+			sprintf(str, "%g", *(double *)frameStack.top->data->localData[i]);
 			ifj16print(str);
 		}
 		else	//string

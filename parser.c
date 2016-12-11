@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define debug_print printf
 #else 
@@ -17,7 +17,7 @@ void generateInstruction(int insType, dataTypes dataType, void *id, int op1, int
 	I.op1 = op1;
 	I.op2 = op2;
 	I.res = res;
-	//printf("instrukce jde na list %p\n", (void*)currentInstrList);
+	//debug_print("instrukce jde na list %p\n", (void*)currentInstrList);
 	addInstruction(currentInstrList, I);
 }
 
@@ -94,7 +94,7 @@ int class(){	//<class> -> ID { <def_list> }
 		if (mode == EASY){
 			debug_print("   <class ID = %s>\n", tok.attribute.str);
 			ret = stAddClass(tok.attribute.str);
-			printf("currentClass nastaveno na %s\n", currentClass);
+			debug_print("currentClass nastaveno na %s\n", currentClass);
 			if (ret != OK){
 				return ret;
 			}
@@ -241,14 +241,14 @@ int definition_rest(char *id, int dataType, int context){	 	//<definition_rest> 
 							int index;
 							dataTypes nenipotreba;
 							retIndexType(id, &index, &nenipotreba);
-							printf("generuju static I_ASSIGN z indexu %d na index %d\n", (globalIndex-1), index);
+							debug_print("generuju static I_ASSIGN z indexu %d na index %d\n", (globalIndex-1), index);
 							generateInstruction(I_ASSIGN, nenipotreba, NULL, 3, (globalIndex-1),index);
 							//VOLANI FUNKCE PRO KONTROLU PRIRAZENI
 						} else {
 							debug_print("         <local variable ID = %s dataType = %d + initialization>\n", id, dataType);
 							int index, asdf;
 							retGlobIndex(currentClass,currentFunction,id , &index, &asdf);
-							printf("generuju local I_ASSIGN z indexu %d na index %d\n", (tempIndex-1), (localIndex-1));
+							debug_print("generuju local I_ASSIGN z indexu %d na index %d\n", (tempIndex-1), (localIndex-1));
 							generateInstruction(I_ASSIGN, dataType, NULL, 2, (tempIndex-1), index);
 							//generateInstruction(I_WRITE, dataType, NULL, 0,index,0);
 							//VOLANI FUNKCE PRO KONTROLU PRIRAZENI
@@ -267,7 +267,7 @@ int definition_rest(char *id, int dataType, int context){	 	//<definition_rest> 
 				int ret = stAddFunc(id, dataType);
 				tInstrList *funcList = malloc(sizeof(tInstrList));
 				initList(funcList);
-				printf("zkusime tisknout ukazatel %p\n", (void*)funcList);
+				debug_print("zkusime tisknout ukazatel %p\n", (void*)funcList);
 				currentInstrList = funcList;
 				if (funcList == NULL){
 					return INTER_ERROR;
@@ -297,8 +297,7 @@ int definition_rest(char *id, int dataType, int context){	 	//<definition_rest> 
 				}
 				generateInstruction(I_FRAMED,0,0,0,0,0);
 				generateInstruction(I_RETURN,0,0,0,0,0);
-				printf("-----------------\ninstrukcni paska funkce: %s\n", id);
-				print_elements_of_list(*functionList);
+				debug_print("-----------------\ninstrukcni paska funkce: %s\n", id);
 				currentFunction = NULL;
 				return ret;
 			}
@@ -448,7 +447,7 @@ int stat(int def){	//OK<stat> -> <data_type> ID <definition_rest> ; --definice l
 				if (tok.type == TD_L_BRACKET){
 					ungetToken(tok);
 					int ret = runPrecedence();
-					//printf("precedencka vratila %d\n", ret);
+					//debug_print("precedencka vratila %d\n", ret);
 					if (ret == OK){
 						ret = body(0);
 						if(ret == OK){
@@ -485,7 +484,7 @@ int stat(int def){	//OK<stat> -> <data_type> ID <definition_rest> ; --definice l
 			case TK_RETURN: ; //FUNGUJE
 				token tok2 = getToken(); if (tok2.type == T_ERROR){return tok2.attribute.inumber;}
 				if (tok2.type == TD_SEMICOLON){
-					printf("               <return>\n");
+					debug_print("               <return>\n");
 
 
 					if (mode == TRYHARD){
@@ -504,7 +503,7 @@ int stat(int def){	//OK<stat> -> <data_type> ID <definition_rest> ; --definice l
 					if (ret == OK){
 						tok2 = getToken(); if (tok2.type == T_ERROR){return tok2.attribute.inumber;}
 						if (tok2.type == TD_SEMICOLON){
-							printf("               <return>\n");
+							debug_print("               <return>\n");
 
 					if (mode == TRYHARD){
 						//int index;
@@ -630,10 +629,11 @@ int stat_rest(token id){	//<stat_rest> -> = <expression> ;
 			if (prec == OK){
 				tok = getToken(); if (tok.type == T_ERROR){return tok.attribute.inumber;}
 				if (tok.type == TD_SEMICOLON){
-					printf("                  <assign ID = %s>\n", id.attribute.str);
+					debug_print("                  <assign ID = %s>\n", id.attribute.str);
 					if(mode == TRYHARD){
 						int index;
 						dataTypes nenipotreba;
+						;
 						retIndexType(id.attribute.str, &index, &nenipotreba);
 						if(currentFunction == NULL){
 							generateInstruction(I_ASSIGN, nenipotreba, NULL, 3, globalIndex, index);
@@ -664,6 +664,30 @@ int stat_rest(token id){	//<stat_rest> -> = <expression> ;
 							if (strcmp(id.attribute.str, "ifj16.print") == 0){
 								debug_print("parser: nalezeno volani vestavene funkce ifj16.print\n");
 								printArgs = 0;
+							} else if (strcmp(id.attribute.str, "ifj16.readInt") == 0) {
+								debug_print("parser: nalezeno volani vestavene funkce ifj16.readInt\n");
+								
+							} else if (strcmp(id.attribute.str, "ifj16.readDouble") == 0) {
+								debug_print("parser: nalezeno volani vestavene funkce ifj16.readDouble\n");
+								
+							} else if (strcmp(id.attribute.str, "ifj16.readString") == 0) {
+								debug_print("parser: nalezeno volani vestavene funkce ifj16.readString\n");
+								
+							} else if (strcmp(id.attribute.str, "ifj16.length") == 0) {
+								debug_print("parser: nalezeno volani vestavene funkce ifj16.length\n");
+								
+							} else if (strcmp(id.attribute.str, "ifj16.compare") == 0) {
+								debug_print("parser: nalezeno volani vestavene funkce ifj16.compare\n");
+								
+							} else if (strcmp(id.attribute.str, "ifj16.find") == 0) {
+								debug_print("parser: nalezeno volani vestavene funkce ifj16.find\n");
+								
+							} else if (strcmp(id.attribute.str, "ifj16.substr") == 0) {
+								debug_print("parser: nalezeno volani vestavene funkce ifj16.substr\n");
+								
+							} else if (strcmp(id.attribute.str, "ifj16.sort") == 0) {
+								debug_print("parser: nalezeno volani vestavene funkce ifj16.sort\n");
+								
 							}
 							generateInstruction(I_FRAMEC,0,id.attribute.str,0,0,0);
 						}
@@ -684,6 +708,30 @@ int stat_rest(token id){	//<stat_rest> -> = <expression> ;
 							returnInstruct(id.attribute.str, &funcStart);
 							if (strcmp(id.attribute.str, "ifj16.print") == 0){
 								debug_print("/parser: nalezeno volani vestavene funkce ifj16.print\n");
+								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+							} else if (strcmp(id.attribute.str, "ifj16.readInt") == 0) {
+								debug_print("/parser: nalezeno volani vestavene funkce ifj16.readInt\n");
+								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+							} else if (strcmp(id.attribute.str, "ifj16.readDouble") == 0) {
+								debug_print("/parser: nalezeno volani vestavene funkce ifj16.readDouble\n");
+								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+							} else if (strcmp(id.attribute.str, "ifj16.readString") == 0) {
+								debug_print("/parser: nalezeno volani vestavene funkce ifj16.readString\n");
+								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+							} else if (strcmp(id.attribute.str, "ifj16.length") == 0) {
+								debug_print("/parser: nalezeno volani vestavene funkce ifj16.length\n");
+								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+							} else if (strcmp(id.attribute.str, "ifj16.compare") == 0) {
+								debug_print("/parser: nalezeno volani vestavene funkce ifj16.compare\n");
+								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+							} else if (strcmp(id.attribute.str, "ifj16.find") == 0) {
+								debug_print("/parser: nalezeno volani vestavene funkce ifj16.find\n");
+								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+							} else if (strcmp(id.attribute.str, "ifj16.substr") == 0) {
+								debug_print("/parser: nalezeno volani vestavene funkce ifj16.substr\n");
+								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
+							} else if (strcmp(id.attribute.str, "ifj16.sort") == 0) {
+								debug_print("/parser: nalezeno volani vestavene funkce ifj16.sort\n");
 								generateInstruction(I_CALL, 0, id.attribute.str, 0, 0, 1);
 							} else {
 								generateInstruction(I_CALL, 0, (tInstrList*)funcStart, 0,0,0);
@@ -781,14 +829,14 @@ int arg(){
 		}
 	} else {
 		switch(tok.type){
-			printf("2. pruchod u argumentu\n");
+			debug_print("2. pruchod u argumentu\n");
 			int index;
 			int ret;
 			int datatype;
 			case T_ID:
 			 	debug_print("                  <arg ID = %s>\n", tok.attribute.str);
 			 	ret = retGlobIndex(currentClass, currentFunction, tok.attribute.str, &index, &datatype);
-			 	printf("bla index %d\n", index);
+			 	debug_print("bla index %d\n", index);
 			 	if (ret != OK){
 			 		return ret;
 			 	}
@@ -797,7 +845,7 @@ int arg(){
 				break;
 			case T_QUALID:
 				debug_print("                  <arg ID = %s>\n", tok.attribute.str);
-				printf("bla index %d\n", index);
+				debug_print("bla index %d\n", index);
 				ret = retGlobIndex(NULL, NULL, tok.attribute.str, &index, &datatype);
 				if (ret != OK){
 			 		return ret;
@@ -807,19 +855,19 @@ int arg(){
 				break;
 			case T_INT:
 				debug_print("                  <arg value = %d>\n", tok.attribute.inumber);
-				generateInstruction(I_PUSHP, DATA_INT, NULL, 0, tok.attribute.inumber,0);
+				generateInstruction(I_PUSHP, DATA_INT, NULL, 0, tok.attribute.inumber,DATA_INT);
 				return OK;
 				break;
 
 			case T_DOUBLE:
 				debug_print("                  <arg value = %f>\n", tok.attribute.dnumber);
-				generateInstruction(I_PUSHP, DATA_DOUBLE, NULL, 0, tok.attribute.dnumber,0);
+				generateInstruction(I_PUSHP, DATA_DOUBLE, NULL, 0, tok.attribute.dnumber,DATA_DOUBLE);
 				return OK;
 				break;
 
 			case T_STRING:
 				debug_print("                  <arg value = %s>\n", tok.attribute.str);
-				generateInstruction(I_PUSHP, DATA_STRING, (char*)tok.attribute.str, 0, 0,0);
+				generateInstruction(I_PUSHP, DATA_STRING, (char*)tok.attribute.str, 0, 0,DATA_STRING);
 
 				return OK;
 				break;

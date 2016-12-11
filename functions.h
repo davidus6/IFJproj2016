@@ -22,7 +22,7 @@ char *ifj16substr(char * s, int i, int n);
 
 char *ifj16sort(char *);
 //void ifj16shellSort(char [],int);
-void hlPrint(int, char[10]);
+void hlPrint(int, int[10]);
 void ifj16print(char *);
 
 #endif

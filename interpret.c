@@ -8,7 +8,7 @@
 #include "functions.h"
 #include "parser.h"
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define debug_print printf
 #else 
@@ -22,6 +22,7 @@ char *contClass;
 frameData *prepFrame;
 frameData *lastFrame;
 int paramIndex;
+int dataArray[10];
 
 void dealocateGlobData(){
 		for (int i = 0; i < GLOB_DATASIZE; i++){
@@ -32,7 +33,7 @@ void dealocateGlobData(){
 	}
 
 void frameForRun(tInstrList *instrList){
-	printf("interpret: tvorim frame pro funkci RUN\n");
+	debug_print("interpret: tvorim frame pro funkci RUN\n");
 			int localVarIndex[LOC_DATASIZE];
 			dataTypes localVarDataType[LOC_DATASIZE];
 			int * localVarIndexP = localVarIndex;
@@ -42,7 +43,7 @@ void frameForRun(tInstrList *instrList){
 			//zavolam funkci ktera mi do tech poli narve indexy a datatypy vsech promennych ve funkci
 			count = retITfields("Main.run", localVarIndexP, localVarDataTypeP);
 			for (int i = 0; i < count; i++){
-				printf("ramec pro index %d\n", localVarIndex[i]);
+				debug_print("ramec pro index %d\n", localVarIndex[i]);
 				switch(localVarDataType[i]){
 					case DATA_INT:
 						prepFrame->localData[localVarIndex[i]] = malloc(sizeof(int)); 
@@ -60,7 +61,7 @@ void frameForRun(tInstrList *instrList){
 			}
 			tListItem *bla;
 			bla = globalInstrList.Last->prevIns;
-			printf("---------- navrat z RUN je na %d, za ni je instrukce %d\n", bla->Instruction.insType, bla->nextIns->Instruction.insType);
+			debug_print("---------- navrat z RUN je na %d, za ni je instrukce %d\n", bla->Instruction.insType, bla->nextIns->Instruction.insType);
 			prepFrame->returnAddr = bla;
 			prepFrame->returnFunc = &globalInstrList;
 			debug_print("vytvoren lokalni ramec s %d promennyma\n", count);
@@ -72,13 +73,13 @@ int runInterpret(){
 	tInstrList *progStart;
 	returnInstruct("Main.run", &progStart);
 	currentInstrList = &globalInstrList;
-	//printf("interpret: adresa aktualniho listu %p\n", (void*)currentInstrList);
+	//debug_print("interpret: adresa aktualniho listu %p\n", (void*)currentInstrList);
 	tInstr *I;	
 	initStack(&frameStack);
 	activateFirst(currentInstrList);
 	while (1){
 		I = getInstruction(currentInstrList);
-		printf("cyklim-typ instrukce je %d\n", I->insType);
+		debug_print("cyklim-typ instrukce je %d\n", I->insType);
 		switch (I->insType){
 
 		case I_RUNRUN:
@@ -88,16 +89,16 @@ int runInterpret(){
 			break;
 
 		case I_STOP:
-			printf("interpret: I_STOP\n");
+			debug_print("interpret: I_STOP\n");
 			//MOZNA DEALOKOVAT GLOBAL/LOKAL DATA
 			dealocateGlobData();
-			printf("KONEEEEEEEEEEEEEEEEEEEC\n");
+			debug_print("KONEEEEEEEEEEEEEEEEEEEC\n");
 			//konec programu
 			return 0;
 			break;
 
 		case I_READ:
-			printf("interpret: I_READ\n");
+			debug_print("interpret: I_READ\n");
 			switch(I->dataType){
 					case DATA_INT:
 						scanf("%d", (int*)globalData[I->res]);
@@ -116,17 +117,17 @@ int runInterpret(){
 			break;
 
 		case I_WRITE:
-			printf("interpret: I_WRITE\n");
+			debug_print("interpret: I_WRITE\n");
 			if (I->op1 == 1){
 				switch(I->dataType){
 						case DATA_INT:
-							printf("%d\n",*((int*)globalData[I->op2]));
+							debug_print("%d\n",*((int*)globalData[I->op2]));
 							break;
 						case DATA_DOUBLE:
-							printf("%f\n",*((double*)globalData[I->op2]));
+							debug_print("%f\n",*((double*)globalData[I->op2]));
 							break;
 						case DATA_STRING:
-							printf("%s\n", (char*)globalData[I->op2]);
+							debug_print("%s\n", (char*)globalData[I->op2]);
 							break;
 						default:
 							break;
@@ -134,15 +135,15 @@ int runInterpret(){
 			} else {
 				switch(I->dataType){
 					case DATA_INT:
-						printf("%d\n",*((int*)frameStack.top->data->localData[I->op2]));
+						debug_print("%d\n",*((int*)frameStack.top->data->localData[I->op2]));
 						break;
 					case DATA_DOUBLE:
-						//printf("%f\n",*((double*)globalData[I->op2]));
-						printf("%d\n",*((int*)frameStack.top->data->localData[I->op2]));
+						//debug_print("%f\n",*((double*)globalData[I->op2]));
+						debug_print("%d\n",*((int*)frameStack.top->data->localData[I->op2]));
 						break;
 					case DATA_STRING:
-						//printf("%s\n",(char*)globalData[I->op2]);
-						printf("%s\n",((char*)frameStack.top->data->localData[I->op2]));
+						//debug_print("%s\n",(char*)globalData[I->op2]);
+						debug_print("%s\n",((char*)frameStack.top->data->localData[I->op2]));
 						break;
 					default:
 						break;
@@ -154,18 +155,18 @@ int runInterpret(){
 			break;
 
 		case I_GOTO:
-			printf("interpret: I_GOTO\n");
+			debug_print("interpret: I_GOTO\n");
 			//skok v programu
 			//goToInstr(currentInstrList, I->ptr);
 			break;
 
 		case I_LABEL:
-			printf("interpret: I_LABEL\n");
+			debug_print("interpret: I_LABEL\n");
 			//navesti, nic se neprovadi
 			break;
 
 		case I_ADD:
-			printf("interpret: I_ADD\n");
+			debug_print("interpret: I_ADD\n");
 			if (I->ptr == NULL){ //globalne
 				switch(I->dataType){
 					debug_print("jedem globalne\n");
@@ -200,7 +201,7 @@ int runInterpret(){
 			break;
 		
 		case I_SUB:
-			printf("interpret: I_SUB\n");
+			debug_print("interpret: I_SUB\n");
 			if (I->ptr == NULL){ //globalne
 				switch(I->dataType){
 					debug_print("jedem globalne\n");
@@ -229,7 +230,7 @@ int runInterpret(){
 			break;
 
 		case I_MUL:
-			printf("interpret: I_MUL\n");
+			debug_print("interpret: I_MUL\n");
 			if (I->ptr == NULL){ //globalne
 				switch(I->dataType){
 					debug_print("jedem globalne\n");
@@ -258,7 +259,7 @@ int runInterpret(){
 			break;	
 
 		case I_DIV:
-			printf("interpret: I_DIV\n");
+			debug_print("interpret: I_DIV\n");
 			if (I->ptr == NULL){ //globalne
 
 				if ((*((int*)globalData[I->op2])) == 0){
@@ -296,7 +297,7 @@ int runInterpret(){
 			break;
 
 		case I_LT:
-			printf("interpret: I_LT\n");
+			debug_print("interpret: I_LT\n");
 			if (I->ptr == NULL){ //globalne
 				switch(I->dataType){
 					debug_print("jedem globalne\n");
@@ -325,7 +326,7 @@ int runInterpret(){
 			break;
 
 		case I_GT:
-			printf("interpret: I_GT\n");
+			debug_print("interpret: I_GT\n");
 			if (I->ptr == NULL){ //globalne
 				switch(I->dataType){
 					debug_print("jedem globalne\n");
@@ -354,7 +355,7 @@ int runInterpret(){
 			break;	
 
 		case I_LET:
-			printf("interpret: I_LET\n");
+			debug_print("interpret: I_LET\n");
 			if (I->ptr == NULL){ //globalne
 				switch(I->dataType){
 					debug_print("jedem globalne\n");
@@ -383,7 +384,7 @@ int runInterpret(){
 			break;	
 
 		case I_GET:
-			printf("interpret: I_GET\n");
+			debug_print("interpret: I_GET\n");
 			if (I->ptr == NULL){ //globalne
 				switch(I->dataType){
 					debug_print("jedem globalne\n");
@@ -412,7 +413,7 @@ int runInterpret(){
 			break;
 
 		case I_EQ:
-			printf("interpret: I_EQ\n");
+			debug_print("interpret: I_EQ\n");
 			if (I->ptr == NULL){ //globalne
 				switch(I->dataType){
 					debug_print("jedem globalne\n");
@@ -441,7 +442,7 @@ int runInterpret(){
 			break;	
 
 		case I_NEQ:
-			printf("interpret: I_NEQ\n");
+			debug_print("interpret: I_NEQ\n");
 			if (I->ptr == NULL){ //globalne
 				switch(I->dataType){
 					debug_print("jedem globalne\n");
@@ -470,7 +471,7 @@ int runInterpret(){
 			break;
 
 		case I_FRAMEC: ;
-			printf("interpret: I_FRAMEC\n");
+			debug_print("interpret: I_FRAMEC\n");
 			int localVarIndex[LOC_DATASIZE];
 			dataTypes localVarDataType[LOC_DATASIZE];
 			int * localVarIndexP = localVarIndex;
@@ -480,7 +481,7 @@ int runInterpret(){
 			//zavolam funkci ktera mi do tech poli narve indexy a datatypy vsech promennych ve funkci
 			count = retITfields((char*)I->ptr, localVarIndexP, localVarDataTypeP);
 			for (int i = 0; i < count; i++){
-				printf("ramec pro index %d\n", localVarIndex[i]);
+				debug_print("ramec pro index %d\n", localVarIndex[i]);
 				switch(localVarDataType[i]){
 					case DATA_INT:
 						prepFrame->localData[localVarIndex[i]] = malloc(sizeof(int)); 
@@ -501,14 +502,15 @@ int runInterpret(){
 			break;
 
 		case I_PUSHP: //na pozici op2 je ulozeno odkud, na op1 je lok/glob
-			printf("interpret: I_PUSHP\n");	
-			printf(">>>>>>>>>>>>>datovy typ je %d\n", I->res);
+			debug_print("interpret: I_PUSHP\n");	
+			debug_print(">>>>>>>>>>>>>datovy typ je %d\n", I->res);
+			dataArray[paramIndex] = I->res;
 			switch(I->dataType){
 				case DATA_UNKNOWN:
 					if (I->op1 == 1){ //globalne
 						if (I->res == 0){ //dataType INT
 							*(int*)prepFrame->localData[paramIndex] = *((int*)globalData[I->op2]);
-							//printf("pushuju %d na index %d\n", globalData[I->op2], paramIndex);
+							//debug_print("pushuju %d na index %d\n", globalData[I->op2], paramIndex);
 						} else if (I->res == 1){
 							*(double*)prepFrame->localData[paramIndex] = *((double*)globalData[I->op2]);
 						} else if (I->res == 2){
@@ -517,7 +519,7 @@ int runInterpret(){
 					} else { //lokalne
 						if (I->res == 0){ //dataType INT
 							*(int*)prepFrame->localData[paramIndex] = *((int*)frameStack.top->data->localData[I->op2]);
-							printf("pushuju %d na index %d\n", *((int*)frameStack.top->data->localData[I->op2]), paramIndex);
+							debug_print("pushuju %d na index %d\n", *((int*)frameStack.top->data->localData[I->op2]), paramIndex);
 						} else if (I->res == 1){
 							*(double*)prepFrame->localData[paramIndex] = *((double*)frameStack.top->data->localData[I->op2]);
 						} else if (I->res == 2){
@@ -525,14 +527,14 @@ int runInterpret(){
 						}
 
 
-						*(int*)prepFrame->localData[paramIndex] = *((int*)frameStack.top->data->localData[I->op2]);
-						//printf("pushuju %d na index %d\n", *((int*)frameStack.top->data->localData[I->op2]), paramIndex);
-						//printf("je tam %s\n", (char*)prepFrame->localData[paramIndex]);
+						//*(int*)prepFrame->localData[paramIndex] = *((int*)frameStack.top->data->localData[I->op2]);
+						//debug_print("pushuju %d na index %d\n", *((int*)frameStack.top->data->localData[I->op2]), paramIndex);
+						//debug_print("je tam %s\n", (char*)prepFrame->localData[paramIndex]);
 					}
 					break;
 				case DATA_INT:
 					*((int*)prepFrame->localData[paramIndex]) = I->op2;
-					printf("pushujuiu %d na index %d\n", I->op2, paramIndex);
+					debug_print("pushujuiu %d na index %d\n", I->op2, paramIndex);
 					break;
 				case DATA_DOUBLE:
 				//nejspis pretypovani druheho operandu na double!!!!!!!!!1
@@ -540,7 +542,7 @@ int runInterpret(){
 					break;
 				case DATA_STRING:
 					prepFrame->localData[paramIndex] = (char*)I->ptr;
-					printf("pushuju %s na index %d\n", (char*)I->ptr, paramIndex);
+					debug_print("pushuju %s na index %d\n", (char*)I->ptr, paramIndex);
 					break;
 				default:
 					return INTER_ERROR;
@@ -549,8 +551,8 @@ int runInterpret(){
 			break;
 
 		case I_FRAMED: ;
-			printf("interpret: I_FRAMED\n");
-			printf("framed: adresa na topu %p, pocet prvku stacku: %d\n", (void*)frameStack.top->data->returnFunc, frameStack.size);
+			debug_print("interpret: I_FRAMED\n");
+			debug_print("framed: adresa na topu %p, pocet prvku stacku: %d\n", (void*)frameStack.top->data->returnFunc, frameStack.size);
 			//ulozit si odkladany frame!!
 			lastFrame = topStack(&frameStack);
 			(void) lastFrame;
@@ -558,10 +560,10 @@ int runInterpret(){
 			break;
 
 		case I_CALL:
-			printf("interpret: I_CALL\n");
-			printf("printArgs = %d\n", (printArgs+1));
+			debug_print("interpret: I_CALL\n");
+			debug_print("printArgs = %d\n", (printArgs+1));
 			if (I->res == 0){
-				//printf("bude proveden skok na instrukci %d\n", (tListItem*)I->ptr->Instruction.insType);
+				//debug_print("bude proveden skok na instrukci %d\n", (tListItem*)I->ptr->Instruction.insType);
 				//prepFrame->returnAddr = malloc(sizeof(tListItem*));
 				prepFrame->returnAddr = currentInstrList->Act;
 				prepFrame->returnFunc = currentInstrList;
@@ -572,25 +574,57 @@ int runInterpret(){
 				} else {
 					prepFrame->returnWhere = NULL;
 				}
-				printf("\n\ncall: adresa na topu %p\na davam adresu %p\n\n", (void*)frameStack.top->data->returnFunc, (void*)currentInstrList);
+				debug_print("\n\ncall: adresa na topu %p\na davam adresu %p\n\n", (void*)frameStack.top->data->returnFunc, (void*)currentInstrList);
 				pushStack(&frameStack, prepFrame);
-				printf("instrukce pro navrat je %d\n", frameStack.top->data->returnAddr->Instruction.insType);
+				debug_print("instrukce pro navrat je %d\n", frameStack.top->data->returnAddr->Instruction.insType);
 				//goToInstr(currentInstrList, (tListItem*)I->ptr);
 				currentInstrList = (tInstrList*)I->ptr;
 				activateFirst(currentInstrList);
 			} else {
 				if (strcmp(I->ptr, "ifj16.print") == 0){
 					pushStack(&frameStack, prepFrame);
-					hlPrint((printArgs+1));
+					hlPrint((printArgs+1), dataArray);
+					popStack(&frameStack);
+				} else if (strcmp(I->ptr, "ifj16.readInt") == 0){
+					pushStack(&frameStack, prepFrame);
+					
+					popStack(&frameStack);
+				} else if (strcmp(I->ptr, "ifj16.readDouble") == 0){
+					pushStack(&frameStack, prepFrame);
+					
+					popStack(&frameStack);
+				} else if (strcmp(I->ptr, "ifj16.readString") == 0){
+					pushStack(&frameStack, prepFrame);
+					
+					popStack(&frameStack);
+				} else if (strcmp(I->ptr, "ifj16.length") == 0){
+					pushStack(&frameStack, prepFrame);
+					
+					popStack(&frameStack);
+				} else if (strcmp(I->ptr, "ifj16.compare") == 0){
+					pushStack(&frameStack, prepFrame);
+					
+					popStack(&frameStack);
+				} else if (strcmp(I->ptr, "ifj16.find") == 0){
+					pushStack(&frameStack, prepFrame);
+					
+					popStack(&frameStack);
+				} else if (strcmp(I->ptr, "ifj16.substr") == 0){
+					pushStack(&frameStack, prepFrame);
+					
+					popStack(&frameStack);
+				} else if (strcmp(I->ptr, "ifj16.sort") == 0){
+					pushStack(&frameStack, prepFrame);
+					
 					popStack(&frameStack);
 				}
 			}
 			break;
 
 		case I_RETURN:
-			printf("interpret: I_RETURN\n");
-			printf("chci se vratit na funkci %p\n", (void*)lastFrame->returnFunc);
-			//printf("chci se vratit na instrukci %d\n", lastFrame->returnAddr->Instruction.insType);//frameStack.top->data->returnAddr->Instruction.insType);
+			debug_print("interpret: I_RETURN\n");
+			debug_print("chci se vratit na funkci %p\n", (void*)lastFrame->returnFunc);
+			//debug_print("chci se vratit na instrukci %d\n", lastFrame->returnAddr->Instruction.insType);//frameStack.top->data->returnAddr->Instruction.insType);
 			//goToInstr(instrList, frameStack.top->data->returnAddr);
 			//goToInstr(currentInstrList, lastFrame->returnAddr);
 			if (I->op1 == 1){
@@ -601,7 +635,7 @@ int runInterpret(){
 			break;
 
 		case I_BLOCKC:
-			printf("interpret: I_BLOCKC\n");
+			debug_print("interpret: I_BLOCKC\n");
 			if ((I->op1) == 1){ //jde o globalni promennou
 				switch(I->dataType){
 					case DATA_INT:
@@ -617,7 +651,7 @@ int runInterpret(){
 					default:
 						break;
 				}
-			//	printf("datatype:%d\n", I->dataType);
+			//	debug_print("datatype:%d\n", I->dataType);
 			//	*((int*)globalData[I->op2]) = I->res; //TOHLE TAM PAK NEBUDE, JEN NA TESTOVANI
 			} else { //jde o lokalni promennou
 
@@ -625,7 +659,7 @@ int runInterpret(){
 			break;
 
 		case I_ASSIGN:
-			printf("interpret: I_ASSIGN\n");
+			debug_print("interpret: I_ASSIGN\n");
 			if (I->op1 == 1){ //globalne konstanta
 				switch(I->dataType){
 							case DATA_INT:
@@ -636,7 +670,7 @@ int runInterpret(){
 								break;
 							case DATA_STRING:
 								globalData[I->res] = (char*)I->ptr;
-								printf("%s\n", (char*)globalData[I->res]);
+								debug_print("%s\n", (char*)globalData[I->res]);
 								break;
 							default:
 								break;
@@ -661,10 +695,10 @@ int runInterpret(){
 				} else if (I->op1 == 2){ //lokalne promenna
 					switch(I->dataType){
 							case DATA_INT:
-							//printf("assign z indexu %d na index %d\n", I->op2, I->res);
-								//printf("instrukce pro navrat je porad %d\n", frameStack.top->data->returnAddr->Instruction.insType);
+							//debug_print("assign z indexu %d na index %d\n", I->op2, I->res);
+								//debug_print("instrukce pro navrat je porad %d\n", frameStack.top->data->returnAddr->Instruction.insType);
 								(*(int*)frameStack.top->data->localData[I->res]) = (*(int*)frameStack.top->data->localData[I->op2]);
-								//printf("instrukce pro navrat je porad %d\n", frameStack.top->data->returnAddr->Instruction.insType);
+								//debug_print("instrukce pro navrat je porad %d\n", frameStack.top->data->returnAddr->Instruction.insType);
 								//*((int*)globalData[I->res]) = I->op2;
 								break;
 							case DATA_DOUBLE:
