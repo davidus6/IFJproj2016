@@ -186,7 +186,7 @@ void retIndexType(char * varName, int *index, dataTypes *type)
 	*type = (found)->type;
 }
 
-int retGlobIndex(char *class, char *func, char *var, int *index)
+int retGlobIndex(char *class, char *func, char *var, int *index, int *type)
 {
 	int check;
 	nodeClassPtr clNode;
@@ -203,6 +203,7 @@ int retGlobIndex(char *class, char *func, char *var, int *index)
 		if (check == 0)
 			return SEM_ERROR_UND;
 		*index = vaNode->index;
+		*type = vaNode->type;
 		return OK;
 	}
 	else
@@ -217,6 +218,7 @@ int retGlobIndex(char *class, char *func, char *var, int *index)
 		if (check == 0)
 			return SEM_ERROR_UND;
 		*index = vaNode->index;
+		*type = vaNode->type;
 		return OK;
 	}
 }

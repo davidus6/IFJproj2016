@@ -45,7 +45,7 @@ int retITfields(char *, int *, dataTypes *);	//prvni char MUSI byt qualid - je t
 void fillLocal(nodeVarPtr *, int *, dataTypes *, int *); //pomocna fce pro retITfields
 
 //trida, fce, prom nebo NULL NULL qualid, index
-int retGlobIndex(char *, char *, char *, int *);
+int retGlobIndex(char *, char *, char *, int *, int *);
 
 /**** po konci bloku ****/
 void stEndFunc();
