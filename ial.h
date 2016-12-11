@@ -2,7 +2,8 @@
 *
 *	Implementace interpretu imperativního jazyka IFJ16
 *	Tým 029, varianta b/3/I
-*	Autori: Janecek David, Jiruska Adam
+*	Autori: Jiruska Adam, Janecek David
+*	Login: xjirus01, xjanec28
 *	
 */
 
@@ -22,16 +23,9 @@
 /**** vestavene funkce ****/
 void shellSort(char [],int);
 
-//DODELAT umazat az bude vse pohromade
-void errorHandle(int);
 
 
 /**** tabulka symbolu ****/
-
-
-
-
-
 
 /****globalni tabulka ****/
 /* strom pro tridy */
@@ -44,7 +38,7 @@ typedef struct nodeClass 		// uzly hlavniho stromu ve kterem budou tridy
 	struct nodeVar *innerVar;
 } *nodeClassPtr;
 
-/* strom pro promenne */
+/* tabulka pro promenne */
 typedef struct nodeVar 	
 {
 	int index;
@@ -54,7 +48,7 @@ typedef struct nodeVar
 	struct nodeVar *right;
 } *nodeVarPtr;
 
-/* strom pro funkce */
+/* tabulka pro funkce */
 typedef struct nodeFunc	
 {
 	dataTypes type;

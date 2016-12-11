@@ -1,3 +1,12 @@
+/***** pstack.c *****
+*
+*	Implementace interpretu imperativního jazyka IFJ16
+*	Tým 029, varianta b/3/I
+*	Autori: Jiruska Adam, Janecek David
+*	Login: xjirus01, xjanec28
+*	
+*/
+
 #include "pstack.h"
 
 void pStackInit(pStack *S){

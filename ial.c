@@ -2,9 +2,11 @@
 *
 *	Implementace interpretu imperativního jazyka IFJ16
 *	Tým 029, varianta b/3/I
-*	Autori: Janecek David, Jiruska Adam
+*	Autori: Jiruska Adam, Janecek David
+*	Login: xjirus01, xjanec28
 *	
 */
+
 
 #include "ial.h"
 #include <string.h>
@@ -28,10 +30,7 @@ void shellSort(char str[],int n)
 			}
 		str[j] = temp;
 		}
-		if (step == 2)
-			step = 1;
-		else
-			step = (int) (step / 2.2);
+		step = step / 2;
 	}
 }
 
@@ -42,7 +41,7 @@ void initClassTree(nodeClassPtr *root)
 	root = NULL;
 }
 
-void insertClass(nodeClassPtr *root, char *key) //DODELAT kdyz uz tam klic je tak error, nebo check jestli uz bylo blabla
+void insertClass(nodeClassPtr *root, char *key)
 {
 	nodeClassPtr new = malloc(sizeof(struct nodeClass));
 	new->keyName = key;

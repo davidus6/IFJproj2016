@@ -2,7 +2,8 @@
 *
 *	Implementace interpretu imperativního jazyka IFJ16
 *	Tým 029, varianta b/3/I
-*	Autori: Janecek David, Jiruska Adam
+*	Autori: Jiruska Adam, Janecek David
+*	Login: xjirus01, xjanec28
 *	
 */
 
@@ -47,8 +48,8 @@ void initGlobalTable()
 	stAddParam("s", DATA_STRING);
 }
 
-int stAddClass(char *key)	//odstranit gT
-{		// DODELAT sracka s ifj16 - jesto to chce promyslet
+int stAddClass(char *key)
+{
 	nodeClassPtr throwAway;
 	if (searchClass(globalTable, key, &throwAway) == 1)	//nechci aby mi to prepsalo kontex nebo neco
 		return SEM_ERROR_UND;
