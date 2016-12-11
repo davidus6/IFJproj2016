@@ -187,7 +187,10 @@ char *ifj16sort(char *sorted)
 
 void hlPrint(int n)
 {
-	//ifj16print((char *)frameStack.top->data->localData[I->op2]);
+	for (int i = 0; i < n; i++)
+	{
+		ifj16print((char *)frameStack.top->data->localData[i]);
+	}
 }
 
 
