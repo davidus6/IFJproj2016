@@ -2,7 +2,8 @@
 *
 *	Implementace interpretu imperativního jazyka IFJ16
 *	Tým 029, varianta b/3/I
-*	Autori: Janecek David, Jiruska Adam
+*	Autori: Jiruska Adam, Janecek David
+*	Login: xjirus01, xjanec28
 *	
 */
 
@@ -47,8 +48,8 @@ void initGlobalTable()
 	stAddParam("s", DATA_STRING);
 }
 
-int stAddClass(char *key)	//odstranit gT
-{		// DODELAT sracka s ifj16 - jesto to chce promyslet
+int stAddClass(char *key)
+{
 	nodeClassPtr throwAway;
 	if (searchClass(globalTable, key, &throwAway) == 1)	//nechci aby mi to prepsalo kontex nebo neco
 		return SEM_ERROR_UND;
@@ -142,40 +143,6 @@ int returnInstruct(char *qualFunc, tInstrList **instructions)
 		return SEM_ERROR_UND;
 	*instructions = fuNode->instructions;
 	return OK; 
-}
-
-//idType == 1 -> je to qualid, == 0 -> je to normal id
-int stAssignment(char *key1, int idType, char *key2)
-{
-	if (idType == 1)
-	{
-		return OK;//printf("DODELAT\n");
-	}
-	else
-	{
-		nodeVarPtr testVarPtr1;
-		nodeVarPtr testVarPtr2;
-		int check = searchVar((contextClass)->innerVar, key1, &testVarPtr1);
-		if (check == 0)
-		{
-			return SEM_ERROR_UND;
-		}
-		else
-		{
-			check = searchVar((contextClass)->innerVar, key1, &testVarPtr2);
-			if (check == 0)
-			{
-				return SEM_ERROR_UND;
-			}
-			else
-			{
-				if (testVarPtr1->type == testVarPtr2->type)
-					return OK;
-				else
-					return SEM_ERROR_TYPE;
-			}
-		}
-	}
 }
 
 void retIndexType(char * varName, int *index, dataTypes *type)
@@ -463,6 +430,7 @@ int precOper(char *class, char *function, opType operation, char *ident1, char *
 	
 }
 
+//zkusi najit tridu Main a fci Run - pokud nejsou, vrati error
 int checkMainRun()
 {
 	nodeClassPtr clNode;
@@ -474,8 +442,5 @@ int checkMainRun()
     check = searchFunc(clNode->innerFunc, "run", &fuNode);
     if (check == 0)
     	return SEM_ERROR_UND;
-    if (fuNode->type == DATA_VOID)
-    	return OK;
-    else
-    	return SEM_ERROR_UND;
+    return OK;
 }

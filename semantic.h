@@ -2,7 +2,8 @@
 *
 *	Implementace interpretu imperativního jazyka IFJ16
 *	Tým 029, varianta b/3/I
-*	Autori: Janecek David, Jiruska Adam
+*	Autori: Jiruska Adam, Janecek David
+*	Login: xjirus01, xjanec28
 *	
 */
 
@@ -34,8 +35,6 @@ int precOper(char *, char *, opType, char *, char *, char **, int *, int *, int 
 //Var s vysledkem musim vytvorit a vratit jeho jmeno a index
 
 int checkMainRun();
-
-int stAssignment(char *, int, char *);	//prirazeni, zatim pocitam s tim ze na obou stranach je promenna
 
 
 //jeji index a datovej typ
