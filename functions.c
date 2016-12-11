@@ -15,6 +15,7 @@
 #include "functions.h"
 #include "error_codes.h"
 #include "str.h"
+#include "ial.h"
 
 
 int ifj16readInt ()
@@ -183,6 +184,11 @@ char *ifj16sort(char *sorted)
 			step = (int) (step / 2.2);
 	}
 }*/
+
+void hlPrint(int n)
+{
+	//ifj16print((char *)frameStack.top->data->localData[I->op2]);
+}
 
 
 void ifj16print(char *string)

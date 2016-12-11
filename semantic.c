@@ -21,6 +21,16 @@ void initGlobalTable()
 	stAddFunc("readDouble", DATA_DOUBLE);
 	stAddFunc("readString", DATA_STRING);
 	stAddFunc("print", DATA_VOID);	//jak budou parametry?
+	stAddParam("pp0", DATA_STRING);
+	stAddParam("pp1", DATA_STRING);
+	stAddParam("pp2", DATA_STRING);
+	stAddParam("pp3", DATA_STRING);
+	stAddParam("pp4", DATA_STRING);
+	stAddParam("pp5", DATA_STRING);
+	stAddParam("pp6", DATA_STRING);
+	stAddParam("pp7", DATA_STRING);
+	stAddParam("pp8", DATA_STRING);
+	stAddParam("pp9", DATA_STRING);
 	stAddFunc("length", DATA_INT);
 	stAddParam("s", DATA_STRING);
 	stAddFunc("substr", DATA_STRING);
