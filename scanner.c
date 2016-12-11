@@ -137,32 +137,32 @@ char *makeQualid(char *id1, char*id2)
 // mode 0 vraci nazev tridy, jinak nazev funkce/promenne
 char *divideQualid(char *qualid, int mode)
 {
-	string str;
-	strInit(&str);
-	char ch;
-	int length = strlen(qualid);
-	int size = 1;
-	ch = qualid[0];
-	while (ch != '.')
-	{
-		strAddChar(&str, ch);
-		ch = qualid[size];
-		size++;
-	}
-	if (mode == 0)
-	{
-		return str.str;
-	}
-	else
-	{
-		strClear(&str);
-		for (; size < length; size++)
-		{
-			ch = qualid[size];
-			strAddChar(&str, ch);
-		}
-		return str.str;
-	}
+    string str;
+    strInit(&str);
+    char ch;
+    int length = strlen(qualid);
+    int size = 1;
+    ch = qualid[0];
+    while (ch != '.')
+    {
+        strAddChar(&str, ch);
+        ch = qualid[size];
+        size++;
+    }
+    if (mode == 0)
+    {
+        return str.str;
+    }
+    else
+    {
+        strClear(&str);
+        for (; size < length; size++)
+        {
+            ch = qualid[size];
+            strAddChar(&str, ch);
+        }
+        return str.str;
+    }
 }
 
 // funkce rozdeli kval. id na prvni id a druhe id

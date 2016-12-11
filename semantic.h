@@ -1,10 +1,10 @@
 /***** semantic.h *****
 *
-*	Implementace interpretu imperativního jazyka IFJ16
-*	Tým 029, varianta b/3/I
-*	Autori: Jiruska Adam, Janecek David
-*	Login: xjirus01, xjanec28
-*	
+*   Implementace interpretu imperativního jazyka IFJ16
+*   Tým 029, varianta b/3/I
+*   Autori: Jiruska Adam, Janecek David
+*   Login: xjirus01, xjanec28
+*   
 */
 
 #ifndef SEMANTIC_H
@@ -24,13 +24,13 @@ int stAddFunc(char *, dataTypes);
 int stAddParam(char *, dataTypes);
 int stAddLocalVar(char *, dataTypes);
 
-int insertInstruct(char *, char *, tInstrList *);	//trida, fce, instrukcni paska
-int returnInstruct(char *, tInstrList **);	//vzdy qualid fce, instrukcni paska na ulozeni
+int insertInstruct(char *, char *, tInstrList *);   //trida, fce, instrukcni paska
+int returnInstruct(char *, tInstrList **);  //vzdy qualid fce, instrukcni paska na ulozeni
 
 /* semanticke funkce pro precedencni analyzu */
-int precConst(char *, char *, dataTypes, char **, int *);	//prvni 2 param je nazev tridy a fce 
-int precVar(char *, char *, char *, int);	//trida, fce, promenna, 1=qualif-0=id
-int precOper(char *, char *, opType, char *, char *, char **, int *, int *, int *, int *);	
+int precConst(char *, char *, dataTypes, char **, int *);   //prvni 2 param je nazev tridy a fce 
+int precVar(char *, char *, char *, int);   //trida, fce, promenna, 1=qualif-0=id
+int precOper(char *, char *, opType, char *, char *, char **, int *, int *, int *, int *);  
 //prvni 2 param je kontext, typ operace, ucastnici, vysledek
 //Var s vysledkem musim vytvorit a vratit jeho jmeno a index
 
@@ -38,8 +38,8 @@ int checkMainRun();
 
 
 //jeji index a datovej typ
-void retIndexType(char *, int *, dataTypes *);	//volano po pridani static prom. po jeji definici
-int retITfields(char *, int *, dataTypes *);	//prvni char MUSI byt qualid - je to id funkce
+void retIndexType(char *, int *, dataTypes *);  //volano po pridani static prom. po jeji definici
+int retITfields(char *, int *, dataTypes *);    //prvni char MUSI byt qualid - je to id funkce
 //pole indexu, pole datovych type, vracim pocet
 void fillLocal(nodeVarPtr *, int *, dataTypes *, int *); //pomocna fce pro retITfields
 

@@ -28,35 +28,35 @@ int boyerMoore(char *, char *, int, int);
 
 /**** tabulka symbolu ****/
 /* strom pro tridy */
-typedef struct nodeClass 		// uzly hlavniho stromu ve kterem budou tridy
+typedef struct nodeClass        // uzly hlavniho stromu ve kterem budou tridy
 {
-	char *keyName;
-	struct nodeClass *left;
-	struct nodeClass *right;
-	struct nodeFunc *innerFunc;
-	struct nodeVar *innerVar;
+    char *keyName;
+    struct nodeClass *left;
+    struct nodeClass *right;
+    struct nodeFunc *innerFunc;
+    struct nodeVar *innerVar;
 } *nodeClassPtr;
 
 /* strom pro promenne */
-typedef struct nodeVar 	
+typedef struct nodeVar  
 {
-	int index;
-	dataTypes type;
-	char *keyName;
-	struct nodeVar *left;
-	struct nodeVar *right;
+    int index;
+    dataTypes type;
+    char *keyName;
+    struct nodeVar *left;
+    struct nodeVar *right;
 } *nodeVarPtr;
 
 /* strom pro funkce */
-typedef struct nodeFunc	
+typedef struct nodeFunc 
 {
-	dataTypes type;
-	char parameters[25];
-	tInstrList *instructions;
-	char *keyName;
-	struct nodeVar *localTable;
-	struct nodeFunc *left;
-	struct nodeFunc *right;
+    dataTypes type;
+    char parameters[25];
+    tInstrList *instructions;
+    char *keyName;
+    struct nodeVar *localTable;
+    struct nodeFunc *left;
+    struct nodeFunc *right;
 } *nodeFuncPtr;
 
 //funkce pro praci s tabulkami

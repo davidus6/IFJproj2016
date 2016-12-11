@@ -1,10 +1,10 @@
 /***** str.h *****
 *
-*	Implementace interpretu imperativního jazyka IFJ16
-*	Tým 029, varianta b/3/I
-*	Autori: Jiruska Adam, Janecek David
-*	Login: xjirus01, xjanec28
-*	***** prevzato z ukazky *****
+*   Implementace interpretu imperativního jazyka IFJ16
+*   Tým 029, varianta b/3/I
+*   Autori: Jiruska Adam, Janecek David
+*   Login: xjirus01, xjanec28
+*   ***** prevzato z ukazky *****
 */
 
 
@@ -17,9 +17,9 @@
 
 typedef struct
 {
-  char* str;		// misto pro dany retezec ukonceny znakem '\0'
-  int length;		// skutecna delka retezce
-  int allocSize;	// velikost alokovane pameti
+  char* str;        // misto pro dany retezec ukonceny znakem '\0'
+  int length;       // skutecna delka retezce
+  int allocSize;    // velikost alokovane pameti
 } string;
 
 
