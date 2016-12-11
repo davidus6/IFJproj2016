@@ -36,8 +36,6 @@ int precOper(char *, char *, opType, char *, char *, char **, int *, int *, int 
 
 int checkMainRun();
 
-int stAssignment(char *, int, char *);	//prirazeni, zatim pocitam s tim ze na obou stranach je promenna
-
 
 //jeji index a datovej typ
 void retIndexType(char *, int *, dataTypes *);	//volano po pridani static prom. po jeji definici
